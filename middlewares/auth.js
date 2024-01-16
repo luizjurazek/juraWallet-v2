@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+require('dotenv').config()
 const SECRET_JWT = process.env.SECRET_JWT
 
 
@@ -15,7 +16,7 @@ function verifyJWT(req, res, next){
             message: 'Failed to authenticate token.'
         })
 
-        req.userId = decoded.id
+        req.userId = decoded.user_id
         next()
     })
 }
