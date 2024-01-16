@@ -1,6 +1,7 @@
 const UserModel = require('../models/userModel')
 const verifyEmailInUse = require('../utils/emailInUseUtil')
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 const SECRET_JWT = process.env.SECRET_JWT
 
 const userController = {
@@ -10,9 +11,10 @@ const userController = {
             lastname,
             phonenumber,
             email,
-            password,
             birthday
         } = req.body
+
+        const password = await bcrypt.hash(req.body.password, 8)
 
         if (await verifyEmailInUse(email)) {
             const response = {
@@ -85,7 +87,7 @@ const userController = {
         }
 
         const user = row[0]
-        if (user.password != password) {
+        if (!(await bcrypt.compare(password, user.password))) {
             const response = {
                 erro: true,
                 message: "Email ou senha incorreto"
