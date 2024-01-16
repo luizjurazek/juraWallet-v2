@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const SECRET = process.env.SECRET
+const SECRET_JWT = process.env.SECRET_JWT
 
 
 function verifyJWT(req, res, next){
@@ -9,7 +9,7 @@ function verifyJWT(req, res, next){
         message: 'No token provided.'
     })
 
-    jwt.verify(token, SECRET, function(err, decoded){
+    jwt.verify(token, SECRET_JWT, function(err, decoded){
         if(err) return res.status(500).json({
             auth: false,
             message: 'Failed to authenticate token.'

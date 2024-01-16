@@ -1,6 +1,7 @@
 const UserModel = require('../models/userModel')
 const verifyEmailInUse = require('../utils/emailInUseUtil')
-
+const jwt = require('jsonwebtoken')
+const SECRET_JWT = process.env.SECRET_JWT
 
 const userController = {
     createNewUser: async (req, res) => {
@@ -66,6 +67,47 @@ const userController = {
             }
         }
 
+    },
+    loginUser: async (req, res) => {
+        const {
+            email,
+            password
+        } = req.body
+        const row = await UserModel.loginUser(email)
+
+        if (row.length === 0) {
+            const response = {
+                error: true,
+                message: "Usuário não encontrado."
+            }
+
+            return res.status(400).json(response)
+        }
+
+        const user = row[0]
+        if (user.password != password) {
+            const response = {
+                erro: true,
+                message: "Email ou senha incorreto"
+            }
+            return res.status(400).json(response)
+        }
+
+        const SEVEN_DAYS_MILISECONDS = 7 * 24 * 60 * 60 * 1000;
+        const token = jwt.sign({
+            id: user.id_user
+        }, SECRET_JWT, {
+            expiresIn: SEVEN_DAYS_MILISECONDS // 7 dias
+        })
+
+        const response = {
+            error: false,
+            email: user.email,
+            user_id: user.id_user,
+            token: token
+        }
+
+        return res.status(200).json(response)
     }
 }
 
