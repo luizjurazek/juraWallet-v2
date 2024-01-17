@@ -5,10 +5,8 @@ const User = {
         try {
             const query = 'INSERT INTO users (name, lastname, phonenumber, email, password, birthday) VALUE (?, ?, ?, ?, ?, ?)'
             const result = await connection.promise().query(query, [name, lastname, phonenumber, email, password, birthday])
-
             return result[0]
         } catch (error) {
-
             throw error;
         }
     },

@@ -75,8 +75,11 @@ const userController = {
             email,
             password
         } = req.body
+
+        // Consulta o banco para procurar as ocorrencias do email
         const row = await UserModel.loginUser(email)
 
+        // Caso a query seja igual a 0 o usuário nao foi encontrado
         if (row.length === 0) {
             const response = {
                 error: true,
@@ -86,7 +89,10 @@ const userController = {
             return res.status(400).json(response)
         }
 
+        // guarda os dados do usuario na variavel user para facilitar a manipulacao
         const user = row[0]
+        // compara a user.password que veio do banco com a password enviada na req de login
+        // caso seja diferente retorno um status 400
         if (!(await bcrypt.compare(password, user.password))) {
             const response = {
                 erro: true,
@@ -95,7 +101,9 @@ const userController = {
             return res.status(400).json(response)
         }
 
+        // Dias para expirar o token gerado abaixo
         const SEVEN_DAYS_MILISECONDS = 7 * 24 * 60 * 60 * 1000;
+        // gera o token de autenticacao jwt
         const token = jwt.sign({
             id: user.id_user
         }, SECRET_JWT, {
