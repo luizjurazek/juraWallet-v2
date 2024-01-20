@@ -18,6 +18,15 @@ const User = {
         } catch (error){
             throw error
         }
+    }, 
+    deleteAccount: async (user_id) => {
+        try {
+            const query = 'DELETE FROM users WHERE id_user = ?'
+            const result = await connection.promise().query(query, user_id)
+            return result[0]
+        } catch (error){
+            throw error
+        }
     }
 }
 

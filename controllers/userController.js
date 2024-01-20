@@ -105,7 +105,7 @@ const userController = {
         const SEVEN_DAYS_MILISECONDS = 7 * 24 * 60 * 60 * 1000;
         // gera o token de autenticacao jwt
         const token = jwt.sign({
-            id: user.id_user
+            user_id: user.id_user
         }, SECRET_JWT, {
             expiresIn: SEVEN_DAYS_MILISECONDS // 7 dias
         })
@@ -118,6 +118,26 @@ const userController = {
         }
 
         return res.status(200).json(response)
+    },
+    deleteAccount: async (req, res) => {
+        const user_id = req.userId
+        const row = await UserModel.deleteAccount(user_id)
+        
+        if(row.affectedRows > 0){
+            const response = {
+                error: false, 
+                message: "Conta deletada com sucesso."
+            }
+
+            return res.status(200).json(response)
+        } else {
+            const response = {
+                error: true,
+                message: "Houve um erro ao deletar a conta."
+            }
+
+            return res.status(400).json(response)
+        }
     }
 }
 
