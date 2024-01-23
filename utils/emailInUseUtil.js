@@ -3,7 +3,7 @@ const connection = require('../config/connection')
 
 // Função para verificar se o email já está no banco de dados
 async function verifyEmailInUse(email){
-    const query = 'SELECT email FROM users'
+    const query = 'SELECT email_user FROM user'
     const result = await connection.promise().query(query)
     let emailsInUse = result[0]
 

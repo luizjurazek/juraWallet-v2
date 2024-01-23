@@ -91,9 +91,10 @@ const userController = {
 
         // guarda os dados do usuario na variavel user para facilitar a manipulacao
         const user = row[0]
+        console.log(user)
         // compara a user.password que veio do banco com a password enviada na req de login
         // caso seja diferente retorno um status 400
-        if (!(await bcrypt.compare(password, user.password))) {
+        if (!(await bcrypt.compare(password, user.password_user))) {
             const response = {
                 erro: true,
                 message: "Email ou senha incorreto"
