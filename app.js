@@ -8,9 +8,11 @@ const verifyJWT = require('./middlewares/auth')
 app.use(express.json())
 
 const routerUsers = require('./routes/routesUser')
+const routerCategory = require('./routes/routesCategory')
 
 
 app.use('/users', routerUsers)
+app.use('/category', routerCategory)
 
 app.get('/', verifyJWT, (req, res) => {
     res.status(200).json({
