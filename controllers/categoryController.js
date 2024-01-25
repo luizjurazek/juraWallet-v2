@@ -58,6 +58,27 @@ const categoryController = {
         } catch(error){
             throw error
         }
+    },
+    getCategoryById: async (req, res) => {
+        const id_user = req.userId
+        const id_category = req.params.id
+
+        try {
+            const category = await categoryModel.getCategoryById(id_user, id_category)
+
+            if(category.error == false){
+                res.status(201).json(category)
+            } else if (category.error == true) {
+                res.status(400).json(category)
+            } else {
+                res.status(500).json({
+                    error: true,
+                    message: "Houve um erro no servidor."
+                })
+            }    
+        } catch (error) {
+            throw error
+        }
     }
 
 }

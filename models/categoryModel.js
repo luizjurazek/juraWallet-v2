@@ -55,6 +55,36 @@ const Category = {
         } catch (error) {
             throw error;
         }
+    }, 
+    getCategoryById: async (id_user, id_category) => {
+        try {
+            const query = 'SELECT id_category, name_category FROM category WHERE id_user = ? AND id_category = ?'
+            const result = await connection.promise().query(query, [id_user, id_category]);
+            let response;
+
+            let category = result[0]
+
+            // Verificando se categorias foram encontradas com base no comprimento do resultado de array.
+            if (result[0].length === 0) {
+                response = {
+                    error: true,
+                    message: "Categoria não encontrada."
+                };
+            } else {
+                response = {
+                    error: false,
+                    message: "Categoria encontrada com sucesso.",
+                    category: {
+                        id: category[0].id_category,
+                        name: category[0].name_category
+                    }
+                };
+            }
+
+            return response;
+        } catch (error) {
+            throw error
+        }
     }
 };
 
