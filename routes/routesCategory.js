@@ -6,7 +6,7 @@ const categoryController = require('../controllers/categoryController')
 
 router.get('/getAllCategory')
 router.get('/getCategory/:id')
-router.post('/createCategory', verifyJWT, categoryController.createCategory)
+router.post('/createCategory', categoryController.createCategory)
 router.delete('/deleteCategory')
 
 
