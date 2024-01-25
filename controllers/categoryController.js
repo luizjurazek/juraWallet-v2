@@ -1,4 +1,6 @@
+const connection = require('../config/connection')
 const categoryModel = require('../models/categoryModel')
+const { connect } = require('../routes/routesUser')
 const verifyAlreadyExistsItemInBD = require('../utils/verifyAlreadyExistsItemInBD')
 
 const categoryController = {
@@ -11,25 +13,17 @@ const categoryController = {
         if(!CategoryAlreadyExists){
             try {
                 const createdCategory = await categoryModel.createCategory(category_name, id_user)
-    
-                if (createdCategory.affectedRows > 0) {
-                    const response = {
-                        error: false,
-                        menssage: "Categoria criada com sucesso.",
-                        id_category: createdCategory.insertId,
-                        category: category_name
-                    }
-    
-                    res.status(201).json(response)
+                
+                if(createdCategory.error == false){
+                    res.status(201).json(createdCategory)
+                } else if (createdCategory.error == true) {
+                    res.status(400).json(createdCategory)
                 } else {
-                    const response = {
+                    res.status(500).json({
                         error: true,
-                        menssage: "Houve um erro ao criar a categoria.",
-                        category: category_name
-                    }
-    
-                    res.status(400).json(response)
-                }
+                        message: "Houve um erro no servidor."
+                    })
+                }     
             } catch(error){
                 throw error
             }
@@ -42,7 +36,30 @@ const categoryController = {
 
             res.status(400).json(response)
         }
+    },
+    getAllCategory: async (req, res) => {
+        const id_user = req.userId
+
+        try {
+            const categories = await categoryModel.getAllCategory(id_user)
+            console.log(categories)
+
+            if(categories.error == false){
+                res.status(201).json(categories)
+            } else if (categories.error == true) {
+                res.status(400).json(categories)
+            } else {
+                res.status(500).json({
+                    error: true,
+                    message: "Houve um erro no servidor."
+                })
+            }    
+
+        } catch(error){
+            throw error
+        }
     }
+
 }
 
 
