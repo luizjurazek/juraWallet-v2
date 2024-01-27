@@ -5,7 +5,7 @@ const transactionController = require('../controllers/transactionController')
 
 router.post('/createTransaction', transactionController.createTransaction)
 
-routet.get('/getTransactionById')
+router.get('/getTransactionById/:id_transaction', transactionController.getTransactionById)
 router.get('/getTransactionsByName')
 router.get('/getTransactionsByCategory')
 router.get('/getTransactionByDate')

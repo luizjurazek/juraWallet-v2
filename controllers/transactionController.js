@@ -28,6 +28,27 @@ const transactionController = {
         } catch(error){
             throw error
         }
+    },
+    getTransactionById: async (req, res) => {
+        const id_transaction = req.params.id_transaction
+        const id_user = req.userId
+
+        try {
+            const transaction = await transactionModel.getTransactionById(id_transaction, id_user)
+
+            if (transaction.error == false) {
+                res.status(201).json(transaction)
+            } else if (transaction.error == true) {
+                res.status(400).json(transaction)
+            } else {
+                res.status(500).json({
+                    error: true,
+                    message: "Houve um erro no servidor."
+                })
+            }
+        } catch (error){
+            throw error
+        }
         
     }
 }
