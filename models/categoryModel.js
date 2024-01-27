@@ -63,9 +63,9 @@ const Category = {
             let response;
 
             let category = result[0]
-
+            console.log(category)
             // Verificando se categorias foram encontradas com base no comprimento do resultado de array.
-            if (result[0].length === 0) {
+            if (category.length === 0) {
                 response = {
                     error: true,
                     message: "Categoria não encontrada."
@@ -83,6 +83,32 @@ const Category = {
 
             return response;
         } catch (error) {
+            throw error
+        }
+    },
+    deleteCategoryById: async (id_user, id_category) => {
+        try {
+            const query = 'DELETE FROM category WHERE id_user = ? AND id_category =  ?'
+            const result = await connection.promise().query(query, [id_user, id_category])  
+            
+            let categoryDeleted = result[0]
+
+            // Verificando se categorias foram encontradas com base no comprimento do resultado de array.
+            if (categoryDeleted.affectedRows === 0) {
+                response = {
+                    error: true,
+                    message: "Categoria não encontrada."
+                };
+            } else {
+                response = {
+                    error: false,
+                    message: "Categoria deletada com sucesso.",
+                    categoryId: id_category
+                };
+            }
+
+            return response
+        } catch(error){
             throw error
         }
     }
