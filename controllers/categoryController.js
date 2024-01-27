@@ -1,6 +1,8 @@
 const connection = require('../config/connection')
 const categoryModel = require('../models/categoryModel')
-const { connect } = require('../routes/routesUser')
+const {
+    connect
+} = require('../routes/routesUser')
 const verifyAlreadyExistsItemInBD = require('../utils/verifyAlreadyExistsItemInBD')
 
 const categoryController = {
@@ -10,11 +12,11 @@ const categoryController = {
 
         const CategoryAlreadyExists = await verifyAlreadyExistsItemInBD("category", "name_category", id_user, category_name)
 
-        if(!CategoryAlreadyExists){
+        if (!CategoryAlreadyExists) {
             try {
                 const createdCategory = await categoryModel.createCategory(category_name, id_user)
-                
-                if(createdCategory.error == false){
+
+                if (createdCategory.error == false) {
                     res.status(201).json(createdCategory)
                 } else if (createdCategory.error == true) {
                     res.status(400).json(createdCategory)
@@ -23,8 +25,8 @@ const categoryController = {
                         error: true,
                         message: "Houve um erro no servidor."
                     })
-                }     
-            } catch(error){
+                }
+            } catch (error) {
                 throw error
             }
         } else {
@@ -44,7 +46,7 @@ const categoryController = {
             const categories = await categoryModel.getAllCategory(id_user)
             console.log(categories)
 
-            if(categories.error == false){
+            if (categories.error == false) {
                 res.status(201).json(categories)
             } else if (categories.error == true) {
                 res.status(400).json(categories)
@@ -53,9 +55,9 @@ const categoryController = {
                     error: true,
                     message: "Houve um erro no servidor."
                 })
-            }    
+            }
 
-        } catch(error){
+        } catch (error) {
             throw error
         }
     },
@@ -66,7 +68,7 @@ const categoryController = {
         try {
             const category = await categoryModel.getCategoryById(id_user, id_category)
 
-            if(category.error == false){
+            if (category.error == false) {
                 res.status(201).json(category)
             } else if (category.error == true) {
                 res.status(400).json(category)
@@ -75,7 +77,7 @@ const categoryController = {
                     error: true,
                     message: "Houve um erro no servidor."
                 })
-            }    
+            }
         } catch (error) {
             throw error
         }
@@ -86,8 +88,8 @@ const categoryController = {
 
         try {
             const category = await categoryModel.deleteCategoryById(id_user, id_category)
-            
-            if(category.error == false){
+
+            if (category.error == false) {
                 res.status(201).json(category)
             } else if (category.error == true) {
                 res.status(400).json(category)
@@ -96,7 +98,48 @@ const categoryController = {
                     error: true,
                     message: "Houve um erro no servidor."
                 })
-            }    
+            }
+        } catch (error) {
+            throw error
+        }
+    },
+    deleteAllCategories: async (req, res) => {
+        const id_user = req.userId
+
+        try {
+            const deleteCategories = await categoryModel.deleteAllCategories(id_user)
+            if (deleteCategories.error == false) {
+                res.status(201).json(deleteCategories)
+            } else if (deleteCategories.error == true) {
+                res.status(400).json(deleteCategories)
+            } else {
+                res.status(500).json({
+                    error: true,
+                    message: "Houve um erro no servidor."
+                })
+            }
+        } catch(error) {
+            throw error
+        }
+    },
+    editCategory: async (req, res) => {
+        const id_user = req.userId
+        const id_category = req.params.id_category
+        const category_name = req.params.new_name
+
+        try {
+            const editedCategory = await categoryModel.editCategory(id_user, id_category, category_name)
+
+            if (editedCategory.error == false) {
+                res.status(201).json(editedCategory)
+            } else if (editedCategory.error == true) {
+                res.status(400).json(editedCategory)
+            } else {
+                res.status(500).json({
+                    error: true,
+                    message: "Houve um erro no servidor."
+                })
+            }
         } catch(error){
             throw error
         }
