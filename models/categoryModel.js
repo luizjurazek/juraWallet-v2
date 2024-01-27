@@ -56,6 +56,7 @@ const Category = {
             throw error;
         }
     },
+    // funcao para obter categoria por id
     getCategoryById: async (id_user, id_category) => {
         try {
             const SelectByIdQuery = 'SELECT id_category, name_category FROM category WHERE id_user = ? AND id_category = ?'
@@ -86,6 +87,7 @@ const Category = {
             throw error
         }
     },
+    // Funcao para deleter categoria por id
     deleteCategoryById: async (id_user, id_category) => {
         try {
             // Verificar se existem transacoes associadas a categoria
@@ -127,6 +129,7 @@ const Category = {
             throw error
         }
     },
+    // Funcao para deletar todas as categorias
     deleteAllCategories: async (id_user) => {
         try {
             // Verificar se existem transações associadas à categoria
@@ -135,15 +138,18 @@ const Category = {
             const transactionCount = checkResult[0][0].count;
             let response;
 
+            // Caso a categoria esteja associada a uma ou mais transacoes nao é possível realizar o delete
+            // por conta da foreign key associada no banco de dados
+            // é necessario excluir as transacoes e ai sera possivel deletar as categorias
             if (transactionCount > 0) {
                 response = {
                     error: true,
-                    message: "Não é possível excluir as categorias, pois existem transações associadas a elas."
+                    message: "Não é possível excluir as categorias, existem transações associadas a elas."
                 };
             } else {
+                // caso não haja transacoes associas as categorias faremos o delete
                 const deleteAllCategoriesQuery = 'DELETE FROM category WHERE id_user = ?'
                 const deleteAllCategoriesResult = await connection.promise().query(deleteAllCategoriesQuery, id_user)
-
 
                 // Verificando se categorias foram encontradas com base no comprimento do resultado de array.
                 if (deleteAllCategoriesResult[0].affectedRows === 0) {
@@ -164,18 +170,24 @@ const Category = {
             throw error
         }
     },
+    // funcao para editar uma categoria
     editCategory: async (id_user, id_category, name_category) => {
         try {
+            // verifica se existe a categoria 
             const checkCategoryExistsQuery = 'SELECT name_category FROM category WHERE id_category = ? AND id_user = ?'
             const checkCategoryExistsResult = await connection.promise().query(checkCategoryExistsQuery, [id_category, id_user])
             let response;
 
+
+            // caso o array checkCategoryExistsResult[0] seja igual a zero 
+            // indica que não há a categoria selecionada para edicao
             if (checkCategoryExistsResult[0].length === 0) {
                 response = {
                     error: true,
                     message: "Categoria não encontrada."
                 }
             } else {
+                // caso o array checkCategoryExistsResult[0] seja diferente de zero realiza a edicao da categoria encontrada 
                 const editCategoryQuery = 'UPDATE category SET name_category = ? WHERE id_category = ? AND id_user = ?'
                 const editCategoryResult = await connection.promise().query(editCategoryQuery, [name_category, id_category, id_user])
 
@@ -188,7 +200,7 @@ const Category = {
                 } else {
                     let category = checkCategoryExistsResult[0]
                     category = category[0].name_category
-                    
+
                     response = {
                         error: false,
                         message: "Categoria editada com sucesso.",

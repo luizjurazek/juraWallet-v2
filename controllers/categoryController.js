@@ -1,8 +1,4 @@
-const connection = require('../config/connection')
 const categoryModel = require('../models/categoryModel')
-const {
-    connect
-} = require('../routes/routesUser')
 const verifyAlreadyExistsItemInBD = require('../utils/verifyAlreadyExistsItemInBD')
 
 const categoryController = {
