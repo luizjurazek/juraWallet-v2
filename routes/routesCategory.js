@@ -7,6 +7,7 @@ router.post('/createCategory', categoryController.createCategory)
 
 router.get('/getAllCategories', categoryController.getAllCategory)
 router.get('/getCategoryById/:id', categoryController.getCategoryById)
+router.get('/getCategoryByName/:category_name')
 
 router.put('/editCategoryById/:id_category/:new_name', categoryController.editCategory)
 
