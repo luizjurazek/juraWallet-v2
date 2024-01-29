@@ -112,6 +112,29 @@ const transactionController = {
             throw error
         }
 
+    },
+    getTransactionsByDateRange: async (req, res) => {
+        const initial_date = req.params.initial_date
+        const final_date = req.params.final_date
+        const id_user = req.userId
+
+        try {
+            const transactions = await transactionModel.getTransactionsByDateRange(initial_date, final_date, id_user)
+
+            if (transactions.error == false) {
+                res.status(201).json(transactions)
+            } else if (transactions.error == true) {
+                res.status(400).json(transactions)
+            } else {
+                res.status(500).json({
+                    error: true,
+                    message: "Houve um erro no servidor."
+                })
+            }
+        } catch (error) {
+            throw error
+        }
+
     }
 }
 
