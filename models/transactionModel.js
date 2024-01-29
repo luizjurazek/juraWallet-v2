@@ -44,29 +44,30 @@ const Transaction = {
     },
     getTransactionById: async (id_transaction, id_user) => {
         try {
-            const getTransactionByIdQuery = 'SELECT name_transaction, price_transaction, date_transaction, id_category, id_typeOfTransaction FROM transaction WHERE id_transaction = ? AND id_user = ?'
-            let getTransactionByIdResult = await connection.promise().query(getTransactionByIdQuery, [id_transaction, id_user])
+            const transactionByIdQuery = 'SELECT name_transaction, price_transaction, date_transaction, id_category, id_typeOfTransaction FROM transaction WHERE id_transaction = ? AND id_user = ?'
+            let transactionByIdResult = await connection.promise().query(transactionByIdQuery, [id_transaction, id_user])
 
-            getTransactionByIdResult = getTransactionByIdResult[0]
+            transactionByIdResult = transactionByIdResult[0]
 
             let response;
 
-            if (getTransactionByIdResult.length === 0) {
+            if (transactionByIdResult.length === 0) {
                 response = {
                     error: true,
                     message: "Transação não encontrada.",
-                    id_transacao: id_transaction
+                    id_transaction: id_transaction
                 }
             } else {
                 response = {
                     error: false,
                     message: "Transação encontrada com sucesso",
+                    id_transaction: id_transaction,
                     transacao: {
-                        name: getTransactionByIdResult[0].name_transaction,
-                        price: getTransactionByIdResult[0].price_transaction,
-                        date: getTransactionByIdResult[0].date_transaction,
-                        category: getTransactionByIdResult[0].id_category,
-                        type: getTransactionByIdResult[0].id_typeOfTransaction
+                        name: transactionByIdResult[0].name_transaction,
+                        price: transactionByIdResult[0].price_transaction,
+                        date: transactionByIdResult[0].date_transaction,
+                        category: transactionByIdResult[0].id_category,
+                        type: transactionByIdResult[0].id_typeOfTransaction
                     }
                 }
             }
@@ -78,20 +79,22 @@ const Transaction = {
     },
     getTransactionsByName: async (name_transaction, id_user) => {
         try {
-            const getTransactionsByNameQuery = 'SELECT * FROM transaction WHERE name_transaction LIKE ? AND id_user = ?'
-            const getTransactionsByNameResult = await connection.promise().query(getTransactionsByNameQuery, [`%${name_transaction}%`, id_user])
+            const transactionsByNameQuery = 'SELECT * FROM transaction WHERE name_transaction LIKE ? AND id_user = ?'
+            const transactionsByNameResult = await connection.promise().query(transactionsByNameQuery, [`%${name_transaction}%`, id_user])
             let response;
 
-            if (getTransactionsByNameResult[0].length === 0) {
+            if (transactionsByNameResult[0].length === 0) {
                 response = {
                     error: true,
-                    message: `Não foram encontradas transação com o nome ${name_transaction}.`
+                    message: `Não foram encontradas transação com o nome ${name_transaction}.`,
+                    transaction_name: name_transaction
                 }
             } else {
                 response = {
                     error: false,
-                    message: `Foram encontradas ${getTransactionsByNameResult[0].length} transações correspondentes a busca ${name_transaction}`,
-                    transactions: getTransactionsByNameResult[0]
+                    message: `Foram encontradas ${transactionsByNameResult[0].length} transações correspondentes a busca ${name_transaction}`,
+                    transaction_name: name_transaction,
+                    transactions: transactionsByNameResult[0]
                 }
             }
 
@@ -102,20 +105,47 @@ const Transaction = {
     },
     getTransactionsByCategoryName: async (name_category, id_user) => {
         try {
-            const getTransactionsByCategoryNameQuery = 'SELECT * FROM transaction JOIN category ON transaction.id_category = category.id_category WHERE transaction.id_user = ? AND category.name_category LIKE ?'
-            const getTransactionsByCategoryNameResult = await connection.promise().query(getTransactionsByCategoryNameQuery, [id_user, `%${name_category}%`])
+            const transactionsByCategoryNameQuery = 'SELECT * FROM transaction JOIN category ON transaction.id_category = category.id_category WHERE transaction.id_user = ? AND category.name_category LIKE ?'
+            const transactionsByCategoryNameResult = await connection.promise().query(transactionsByCategoryNameQuery, [id_user, `%${name_category}%`])
             let response;
 
-            if (getTransactionsByCategoryNameResult[0].length === 0) {
+            if (transactionsByCategoryNameResult[0].length === 0) {
                 response = {
                     error: true,
-                    message: `Não foram encontradas transação com a categoria ${name_category}.`
+                    message: `Não foram encontradas transação com a categoria ${name_category}.`,
+                    category: name_category
                 }
             } else {
                 response = {
                     error: false,
-                    message: `Foram encontradas ${getTransactionsByCategoryNameResult[0].length} transações correspondentes a busca ${name_category}`,
-                    transactions: getTransactionsByCategoryNameResult[0]
+                    message: `Foram encontradas ${transactionsByCategoryNameResult[0].length} transações correspondentes a busca ${name_category}`,
+                    category: name_category,
+                    transactions: transactionsByCategoryNameResult[0]
+                }
+            }
+
+            return response
+        } catch (error) {
+            throw error
+        }
+    },
+    getTransactionByDate: async (date, id_user) => {
+        try {
+            const transactionsByDateQuery = 'SELECT * FROM transaction WHERE date_transaction = ? AND id_user = ?'
+            const transactionByDateResult = await connection.promise().query(transactionsByDateQuery, [date, id_user])
+
+            if (transactionByDateResult[0].length === 0) {
+                response = {
+                    error: true,
+                    message: `Não foram encontradas transações com a data ${date}.`,
+                    date: date
+                }
+            } else {
+                response = {
+                    error: false,
+                    message: `Foram encontradas ${transactionByDateResult[0].length} transações correspondentes a data ${date}`,
+                    date: date,
+                    transactions: transactionByDateResult[0]
                 }
             }
 

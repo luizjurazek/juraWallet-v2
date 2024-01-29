@@ -90,6 +90,28 @@ const transactionController = {
         } catch (error) {
             throw error
         }
+    },
+    getTransactionByDate: async (req, res) => {
+        const date = req.params.date
+        const id_user = req.userId
+
+        try {
+            const transactions = await transactionModel.getTransactionByDate(date, id_user)
+
+            if (transactions.error == false) {
+                res.status(201).json(transactions)
+            } else if (transactions.error == true) {
+                res.status(400).json(transactions)
+            } else {
+                res.status(500).json({
+                    error: true,
+                    message: "Houve um erro no servidor."
+                })
+            }
+        } catch (error) {
+            throw error
+        }
+
     }
 }
 
