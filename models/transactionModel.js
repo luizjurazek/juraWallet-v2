@@ -183,6 +183,31 @@ const Transaction = {
         } catch (error) {
             throw error
         }
+    },
+    deleteTransactionById: async (id_transaction, id_user) => {
+        try {
+            const deleteTransactionByIdQuery = 'DELETE FROM transaction WHERE id_transaction = ? AND id_user = ?'
+            const deleteTransactionByIdResult = await connection.promise().query(deleteTransactionByIdQuery, [id_transaction, id_user])
+            let response
+
+            if (deleteTransactionByIdResult[0].affectedRows === 0) {
+                response = {
+                    error: true,
+                    message: "Houve um erro ao deletar a transação."
+                }
+            } else {
+                response = {
+                    error: false,
+                    message: "Transação deletada com sucesso.",
+                    id_transaction: id_transaction
+                }
+            }
+
+            return response
+        } catch (error) {
+            throw error
+        }
+
     }
 }
 

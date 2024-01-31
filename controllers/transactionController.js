@@ -134,7 +134,27 @@ const transactionController = {
         } catch (error) {
             throw error
         }
+    },
+    deleteTransactionById: async (req, res) => {
+        const id_transaction = req.params.id_transaction
+        const id_user = req.userId
 
+        try {
+            const transactionDeleted = await transactionModel.deleteTransactionById(id_transaction, id_user)
+
+            if (transactionDeleted.error == false) {
+                res.status(201).json(transactionDeleted)
+            } else if (transactionDeleted.error == true) {
+                res.status(400).json(transactionDeleted)
+            } else {
+                res.status(500).json({
+                    error: true,
+                    message: "Houve um erro no servidor."
+                })
+            }
+        } catch(error){
+            throw error
+        } 
     }
 }
 
