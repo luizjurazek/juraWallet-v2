@@ -13,4 +13,6 @@ router.get('/getTransactionsByDateRange/:initial_date/:final_date', transactionC
 
 router.delete('/deleteTransactionById/:id_transaction', transactionController.deleteTransactionById)
 
+router.patch('/deleteTransactionById')
+
 module.exports = router
