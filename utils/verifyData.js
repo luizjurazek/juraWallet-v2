@@ -17,4 +17,10 @@ async function verifyEmailInUse(email){
     return false
 }
 
-module.exports = verifyEmailInUse
+
+async function verifyUserData(email, password, birthday, phonenumber){
+    
+}
+
+
+module.exports = { verifyEmailInUse }
