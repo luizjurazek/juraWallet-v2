@@ -1,4 +1,4 @@
-const UserModel = require('../models/userModel')
+const User = require('../models/userModel')
 const {
   verifyEmailInUse
 } = require('../utils/verifyData')
@@ -26,16 +26,26 @@ const userController = {
       res.status(404).json(response)
     } else {
       try {
-        const newUser = await UserModel.createNewUser(name, lastname, phonenumber, email, password, birthday)
+        const newUser = await User.create({
+          name_user: name,
+          lastname_user: lastname,
+          phonenumber_user: phonenumber,
+          email_user: email,
+          password_user: password,
+          birthday_user: birthday
+        })
 
-        if (newUser.affectedRows > 0) {
+        if (newUser) {
           const response = {
             error: false,
             mensagem: "Usuário cadastrado com sucesso!",
             user: {
+              id: newUser.dataValues.id_user,
               name: name,
               lastname: lastname,
-              email: email
+              email: email,
+              phonenumber: phonenumber,
+              birthday: birthday
             }
           }
 
@@ -49,7 +59,9 @@ const userController = {
             user: {
               name: name,
               lastname: lastname,
-              email: email
+              email: email,
+              phonenumber: phonenumber,
+              birthday: birthday
             }
           }
 
@@ -79,10 +91,12 @@ const userController = {
     } = req.body
 
     // Consulta o banco para procurar as ocorrencias do email
-    const row = await UserModel.loginUser(email)
+    const user = await User.findOne({
+      where: { email_user: email }
+    })
 
     // Caso a query seja igual a 0 o usuário nao foi encontrado
-    if (row.length === 0) {
+    if (!user) {
       const response = {
         error: true,
         message: "Usuário não encontrado."
@@ -91,11 +105,9 @@ const userController = {
       return res.status(400).json(response)
     }
 
-    // guarda os dados do usuario na variavel user para facilitar a manipulacao
-    const user = row[0]
     // compara a user.password que veio do banco com a password enviada na req de login
     // caso seja diferente retorno um status 400
-    if (!(await bcrypt.compare(password, user.password_user))) {
+    if (!(await bcrypt.compare(password, user.dataValues.password_user))) {
       const response = {
         erro: true,
         message: "Email ou senha incorreto"
@@ -142,5 +154,52 @@ const userController = {
     }
   }
 }
+
+
+
+// const userHandler = {
+//   createNewUser: async (name, lastname, phonenumber, email, password, birthday) => {
+//     try {
+//       const newUser = await User.create({
+//         name: name,
+//         lastname: lastname,
+//         phonenumber: phonenumber,
+//         email: email,
+//         password: password,
+//         birthday: birthday
+//       })
+//       console.log(newUser)
+//       return newUser
+//     } catch (error) {
+//       throw error;
+//     }
+//   },
+//   loginUser: async (email) => {
+//     try {
+//       const user = await User.findOne({
+//         where: {
+//           email: email
+//         }
+//       })
+//       console.log(newUser)
+//       return user
+//     } catch (error) {
+//       throw error
+//     }
+//   },
+//   deleteAccount: async (user_id) => {
+//     try {
+//       const deletedUser = await User.destroy({
+//         where: {
+//           id: user_id
+//         }
+//       })
+//       console.log(newUser)
+//       return deletedUser
+//     } catch (error) {
+//       throw error
+//     }
+//   }
+// }
 
 module.exports = userController
