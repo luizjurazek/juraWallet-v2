@@ -87,7 +87,7 @@ const categoryController = {
         category: category
       }
 
-      res.status(200).json(response)
+      res.status(200).json(responsefea)
     } catch (error) {
       res.status(500).json({
         error: true,
@@ -102,19 +102,43 @@ const categoryController = {
     const id_category = req.params.id
 
     try {
-      const category = await categoryModel.deleteCategoryById(id_user, id_category)
+      const categoryDeleted = await Category.destroy({
+        where: {
+          id_user: id_user,
+          id_category: id_category
+        }
+      })
 
-      if (category.error == false) {
-        res.status(201).json(category)
-      } else if (category.error == true) {
-        res.status(400).json(category)
-      } else {
-        res.status(500).json({
+      console.log(categoryDeleted)
+
+      if (categoryDeleted == 1) {
+        const response = {
+          error: false,
+          message: "Categoria deletada com sucesso."
+        }
+  
+        return res.status(200).json(response)
+      } else if (categoryDeleted == 0) {
+        const response = {
           error: true,
-          message: "Houve um erro no servidor."
-        })
+          message: "Categoria não encontrada."
+        }
+  
+        return res.status(404).json(response)
+      } else {
+        const response = {
+          error: true,
+          message: "Houve um erro ao deletar a categoria."
+        }
+  
+        return res.status(400).json(response)
       }
     } catch (error) {
+      res.status(500).json({
+        error: true,
+        message: "Houve um erro no servidor."
+      })
+
       throw error
     }
   },
