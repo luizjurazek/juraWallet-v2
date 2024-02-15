@@ -24,6 +24,14 @@ const userController = {
         mensagem: "Email já utilizado!"
       }
       res.status(404).json(response)
+
+
+    // Criar verificacao dos dados do usuario 
+    //  
+    // 
+    // 
+    // 
+    // 
     } else {
       try {
         const newUser = await User.create({
@@ -135,9 +143,13 @@ const userController = {
   },
   deleteAccount: async (req, res) => {
     const user_id = req.userId
-    const row = await UserModel.deleteAccount(user_id)
+    const user = await User.destroy({
+      where: {
+        id_user: user_id
+      }
+    })
 
-    if (row.affectedRows > 0) {
+    if (user == 1) {
       const response = {
         error: false,
         message: "Conta deletada com sucesso."
@@ -154,52 +166,5 @@ const userController = {
     }
   }
 }
-
-
-
-// const userHandler = {
-//   createNewUser: async (name, lastname, phonenumber, email, password, birthday) => {
-//     try {
-//       const newUser = await User.create({
-//         name: name,
-//         lastname: lastname,
-//         phonenumber: phonenumber,
-//         email: email,
-//         password: password,
-//         birthday: birthday
-//       })
-//       console.log(newUser)
-//       return newUser
-//     } catch (error) {
-//       throw error;
-//     }
-//   },
-//   loginUser: async (email) => {
-//     try {
-//       const user = await User.findOne({
-//         where: {
-//           email: email
-//         }
-//       })
-//       console.log(newUser)
-//       return user
-//     } catch (error) {
-//       throw error
-//     }
-//   },
-//   deleteAccount: async (user_id) => {
-//     try {
-//       const deletedUser = await User.destroy({
-//         where: {
-//           id: user_id
-//         }
-//       })
-//       console.log(newUser)
-//       return deletedUser
-//     } catch (error) {
-//       throw error
-//     }
-//   }
-// }
 
 module.exports = userController
