@@ -1,5 +1,4 @@
-const connection = require('../config/connection')
-
+const { connection } = require('../config/connection')
 
 async function verifyAlreadyExistsItemInBD(table, column, id_user, item){
     // Busca todos os itens no bd
