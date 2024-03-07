@@ -1,5 +1,4 @@
 const Transaction = require('../models/transactionModel')
-const { sequelize } = require('../config/connection')
 
 const transactionController = {
   createTransaction: async (req, res) => {
@@ -13,182 +12,28 @@ const transactionController = {
     } = req.body;
     data_transaction.id_user = req.userId
 
-    try {
-      const createdTransaction = await Transaction.create({
-        name_transaction: data_transaction.name_transaction,
-        price_transaction: data_transaction.price_transaction,
-        date_transaction: data_transaction.date_transaction,
-        id_user: data_transaction.id_user,
-        id_category: data_transaction.id_category,
-        id_typeOfTransaction: data_transaction.id_typeOftransaction
+    const createdTransaction = await Transaction.create({
+      name_transaction: data_transaction.name_transaction,
+      price_transaction: data_transaction.price_transaction,
+      date_transaction: data_transaction.date_transaction,
+      id_user: data_transaction.id_user,
+      id_category: data_transaction.id_category,
+      id_typeOfTransaction: data_transaction.id_typeOftransaction
+    }).then(transaction => {
+      res.status(200).json(transaction)
+    }).catch( err => {
+      console.log("Erro: " + err.message)
+      res.status(500).json({
+        error: "Erro ao processar a transação."
       })
-  
-      res.status(200).json(createdTransaction)
-    } catch (err){
-      if(err instanceof sequelize.ValidationError){
-        console.error('Erro de validação: ', err.error)
-        res.status(400).json
-      }
-    }
-  }
-
-
-
-  // createTransaction: async (req, res) => {
-  //   let transaction = {
-  //     id_user,
-  //     name_transaction,
-  //     price_transaction,
-  //     date_transaction,
-  //     id_category,
-  //     id_typeOftransaction
-  //   } = req.body;
-  //   transaction.id_user = req.userId
-
-  //   try {
-  //     const transactionInserted = await transactionModel.createTransaction(transaction)
-
-  //     if (transactionInserted.error == false) {
-  //       res.status(201).json(transactionInserted)
-  //     } else if (transactionInserted.error == true) {
-  //       res.status(400).json(transactionInserted)
-  //     } else {
-  //       res.status(500).json({
-  //         error: true,
-  //         message: "Houve um erro no servidor."
-  //       })
-  //     }
-  //   } catch (error) {
-  //     throw error
-  //   }
-  // },
-  // getTransactionById: async (req, res) => {
-  //   const id_transaction = req.params.id_transaction
-  //   const id_user = req.userId
-
-  //   try {
-  //     const transaction = await transactionModel.getTransactionById(id_transaction, id_user)
-
-  //     if (transaction.error == false) {
-  //       res.status(201).json(transaction)
-  //     } else if (transaction.error == true) {
-  //       res.status(400).json(transaction)
-  //     } else {
-  //       res.status(500).json({
-  //         error: true,
-  //         message: "Houve um erro no servidor."
-  //       })
-  //     }
-  //   } catch (error) {
-  //     throw error
-  //   }
-  // },
-  // getTransactionsByName: async (req, res) => {
-  //   const transaction_name = req.params.name_transaction
-  //   const id_user = req.userId
-
-  //   try {
-  //     const transactions = await transactionModel.getTransactionsByName(transaction_name, id_user)
-
-  //     if (transactions.error == false) {
-  //       res.status(201).json(transactions)
-  //     } else if (transactions.error == true) {
-  //       res.status(400).json(transactions)
-  //     } else {
-  //       res.status(500).json({
-  //         error: true,
-  //         message: "Houve um erro no servidor."
-  //       })
-  //     }
-  //   } catch (error) {
-  //     throw error
-  //   }
-  // },
-  // getTransactionsByCategoryName: async (req, res) => {
-  //   const category_name = req.params.name_category
-  //   const id_user = req.userId
-
-  //   try {
-  //     const transactions = await transactionModel.getTransactionsByCategoryName(category_name, id_user)
-  //     if (transactions.error == false) {
-  //       res.status(201).json(transactions)
-  //     } else if (transactions.error == true) {
-  //       res.status(400).json(transactions)
-  //     } else {
-  //       res.status(500).json({
-  //         error: true,
-  //         message: "Houve um erro no servidor."
-  //       })
-  //     }
-  //   } catch (error) {
-  //     throw error
-  //   }
-  // },
-  // getTransactionByDate: async (req, res) => {
-  //   const date = req.params.date
-  //   const id_user = req.userId
-
-  //   try {
-  //     const transactions = await transactionModel.getTransactionByDate(date, id_user)
-
-  //     if (transactions.error == false) {
-  //       res.status(201).json(transactions)
-  //     } else if (transactions.error == true) {
-  //       res.status(400).json(transactions)
-  //     } else {
-  //       res.status(500).json({
-  //         error: true,
-  //         message: "Houve um erro no servidor."
-  //       })
-  //     }
-  //   } catch (error) {
-  //     throw error
-  //   }
-
-  // },
-  // getTransactionsByDateRange: async (req, res) => {
-  //   const initial_date = req.params.initial_date
-  //   const final_date = req.params.final_date
-  //   const id_user = req.userId
-
-  //   try {
-  //     const transactions = await transactionModel.getTransactionsByDateRange(initial_date, final_date, id_user)
-
-  //     if (transactions.error == false) {
-  //       res.status(201).json(transactions)
-  //     } else if (transactions.error == true) {
-  //       res.status(400).json(transactions)
-  //     } else {
-  //       res.status(500).json({
-  //         error: true,
-  //         message: "Houve um erro no servidor."
-  //       })
-  //     }
-  //   } catch (error) {
-  //     throw error
-  //   }
-  // },
-  // deleteTransactionById: async (req, res) => {
-  //   const id_transaction = req.params.id_transaction
-  //   const id_user = req.userId
-
-  //   try {
-  //     const transactionDeleted = await transactionModel.deleteTransactionById(id_transaction, id_user)
-
-  //     if (transactionDeleted.error == false) {
-  //       res.status(201).json(transactionDeleted)
-  //     } else if (transactionDeleted.error == true) {
-  //       res.status(400).json(transactionDeleted)
-  //     } else {
-  //       res.status(500).json({
-  //         error: true,
-  //         message: "Houve um erro no servidor."
-  //       })
-  //     }
-  //   } catch (error) {
-  //     throw error
-  //   }
-  // }
+    })
+  },
+  getTransactionById: async (req, res) => {},
+  getTransactionsByName: async(req, res) => {},
+  getTransactionsByCategoryName: async(req, res) => {},
+  getTransactionByDate: async(req, res) => {},
+  getTransactionsByDateRange: async(req, res) => {},
+  deleteTransactionById: async(req, res) => {},
 }
 
 module.exports = transactionController
