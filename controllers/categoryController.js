@@ -1,6 +1,3 @@
-const {
-  response
-} = require('express')
 const Category = require('../models/categoryModel')
 const verifyAlreadyExistsItemInBD = require('../utils/verifyAlreadyExistsItemInBD')
 

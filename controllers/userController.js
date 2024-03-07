@@ -1,7 +1,5 @@
 const User = require('../models/userModel')
-const {
-  verifyEmailInUse
-} = require('../utils/verifyData')
+const { verifyEmailInUse } = require('../utils/verifyData')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const SECRET_JWT = process.env.SECRET_JWT
@@ -25,7 +23,6 @@ const userController = {
       }
       res.status(404).json(response)
 
-
     // Criar verificacao dos dados do usuario 
     //  
     // 
@@ -44,6 +41,7 @@ const userController = {
         })
 
         if (newUser) {
+          console.log(newUser)
           const response = {
             error: false,
             mensagem: "Usuário cadastrado com sucesso!",

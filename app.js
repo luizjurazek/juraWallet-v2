@@ -3,7 +3,6 @@ const app = express()
 
 const PORT = 3000
 
-const { sequelize } = require('./config/connection')
 const verifyJWT = require('./middlewares/auth')
 
 app.use(express.json())
