@@ -21,19 +21,50 @@ const transactionController = {
       id_typeOfTransaction: data_transaction.id_typeOftransaction
     }).then(transaction => {
       res.status(200).json(transaction)
-    }).catch( err => {
+    }).catch(err => {
       console.log("Erro: " + err.message)
       res.status(500).json({
         error: "Erro ao processar a transação."
       })
     })
   },
-  getTransactionById: async (req, res) => {},
-  getTransactionsByName: async(req, res) => {},
-  getTransactionsByCategoryName: async(req, res) => {},
-  getTransactionByDate: async(req, res) => {},
-  getTransactionsByDateRange: async(req, res) => {},
-  deleteTransactionById: async(req, res) => {},
+  getTransactionById: async (req, res) => {
+    let id_transaction = req.params.id_transaction
+    let id_user = req.userId
+
+    const selectedTransaction = await Transaction.findOne({
+      where: {
+        id_transaction: id_transaction,
+        id_user: id_user
+      }
+    }).then((transaction => {
+      if (transaction == null) {
+        res.status(404).json({
+          error: true,
+          message: "Houve um erro ao buscar a transação.",
+          id_transaction
+        })
+      } else {
+        res.status(200).json({
+          error: false,
+          message: "Transação localizada com sucesso.",
+          transaction: transaction.dataValues
+        })
+      }
+
+    })).catch(err => {
+      console.log("Erro: " + err)
+      res.status(500).json({
+        error: true,
+        message: "Houve um erro interno."
+      })
+    })
+  },
+  getTransactionsByName: async (req, res) => {},
+  getTransactionsByCategoryName: async (req, res) => {},
+  getTransactionByDate: async (req, res) => {},
+  getTransactionsByDateRange: async (req, res) => {},
+  deleteTransactionById: async (req, res) => {},
 }
 
 module.exports = transactionController
