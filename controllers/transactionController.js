@@ -1,3 +1,5 @@
+const { Op } = require('sequelize');
+const { sequelize } = require('../config/connection');
 const Transaction = require('../models/transactionModel')
 
 const transactionController = {
@@ -60,7 +62,43 @@ const transactionController = {
       })
     })
   },
-  getTransactionsByName: async (req, res) => {},
+  getTransactionsByName: async (req, res) => {
+    let id_user = req.userId
+    let name_transaction = req.params.name_transaction
+    console.log(id_user)
+    console.log(name_transaction)
+    Transaction.findAll({
+      where: {
+        id_user: id_user,
+        name_transaction: {
+          [Op.like]: `%${name_transaction}%`
+        }
+      }
+    }).then(transactions => {
+      console.log(transactions)
+      if(transactions.length == 0){
+        res.status(404).json({
+          error: true,
+          message: "Não foram encontradas transações.",
+          transaction_name: name_transaction
+        })
+      } else {
+        console.log(transactions)
+        res.status(200).json({
+          error: true,
+          message: "Transacões encontradas com sucesso.",
+          transactions: transactions
+        })
+      }
+    }).catch(err => {
+      console.log("Erro: " + err)
+      res.status(500).json({
+        error: true,
+        message: "Houve um erro ao buscar as transações.",
+        transaction_name: name_transaction
+      })
+    })
+  },
   getTransactionsByCategoryName: async (req, res) => {},
   getTransactionByDate: async (req, res) => {},
   getTransactionsByDateRange: async (req, res) => {},
