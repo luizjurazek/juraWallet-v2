@@ -1,7 +1,10 @@
 const { sequelize } = require('../config/connection')
 const { DataTypes } = require('sequelize')
 
-const Transaction = sequelize.define('Transaction', {
+const Category = require('../models/categoryModel')
+const User = require('../models/userModel')
+
+let Transaction = sequelize.define('Transaction', {
     id_transaction: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -51,5 +54,8 @@ const Transaction = sequelize.define('Transaction', {
 }, {
     timestamps: false, // Isso habilita a criação automática dos campos createdAt e updatedAt
 })
+
+Transaction.belongsTo(Category, { foreignKey: 'id_category' });
+Transaction.belongsTo(User, { foreignKey: 'id_user' });
 
 module.exports = Transaction

@@ -5,7 +5,9 @@ const {
 	DataTypes
 } = require('sequelize')
 
-const Category = sequelize.define('Category', {
+const User = require('../models/userModel')
+
+let Category = sequelize.define('Category', {
 	id_category: {
 		type: DataTypes.INTEGER,
 		primaryKey: true,
@@ -26,4 +28,7 @@ const Category = sequelize.define('Category', {
 }, {
   timestamps: false, // Isso habilita a criação automática dos campos createdAt e updatedAt
 })
+
+Category.belongsTo(User, { foreignKey: 'id_user' });
+
 module.exports = Category;
