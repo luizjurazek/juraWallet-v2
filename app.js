@@ -1,5 +1,7 @@
 const express = require('express')
 const app = express()
+const swaggerUi = require('swagger-ui-express')
+const swaggerFile = require('./swagger_output.json')
 
 const PORT = 3000
 
@@ -7,6 +9,7 @@ const verifyJWT = require('./middlewares/auth')
 
 app.use(express.json())
 app.use(express.static('public'))
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
 
 app.set('view engine', 'ejs')
 app.set('views', './views')

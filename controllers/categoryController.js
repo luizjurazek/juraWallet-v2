@@ -2,6 +2,7 @@ const Category = require('../models/categoryModel')
 const verifyAlreadyExistsItemInBD = require('../utils/verifyAlreadyExistsItemInBD')
 
 const categoryController = {
+  
   createCategory: async (req, res) => {
     const category_name = req.body.category_name
     const id_user = req.userId
