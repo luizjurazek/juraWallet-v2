@@ -195,7 +195,10 @@
     },
     "/getTransactionById/{id_transaction}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Transaction"
+        ],
+        "description": "Endpoint para obter uma transação por id.",
         "parameters": [
           {
             "name": "id_transaction",
@@ -219,7 +222,10 @@
     },
     "/getTransactionsByName/{name_transaction}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Transaction"
+        ],
+        "description": "Endpoint para obter uma transação por nome.",
         "parameters": [
           {
             "name": "name_transaction",
@@ -243,7 +249,10 @@
     },
     "/getTransactionsByCategoryName/{name_category}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Transaction"
+        ],
+        "description": "Endpoint para obter transações associadas a uma categoria.",
         "parameters": [
           {
             "name": "name_category",
@@ -267,7 +276,10 @@
     },
     "/deleteTransactionById/{id_transaction}": {
       "delete": {
-        "description": "",
+        "tags": [
+          "Transaction"
+        ],
+        "description": "Endpoint para deletar uma transação.",
         "parameters": [
           {
             "name": "id_transaction",
@@ -291,7 +303,10 @@
     },
     "/createNewUser": {
       "post": {
-        "description": "",
+        "tags": [
+          "User"
+        ],
+        "description": "Endpoint para criar um novo usuário.",
         "parameters": [
           {
             "name": "body",
@@ -336,7 +351,10 @@
     },
     "/loginUser": {
       "post": {
-        "description": "",
+        "tags": [
+          "Transaction"
+        ],
+        "description": "Endpoint para realizar login.",
         "parameters": [
           {
             "name": "body",
@@ -366,7 +384,10 @@
     },
     "/deleteAccount": {
       "delete": {
-        "description": "",
+        "tags": [
+          "Transaction"
+        ],
+        "description": "Endpoint para deletar um usuário.",
         "parameters": [
           {
             "name": "authorization",

@@ -5,9 +5,9 @@ const Transaction = require('../models/transactionModel')
 const Category = require('../models/categoryModel')
 
 const transactionController = {
+  createTransaction: async (req, res) => {
     // #swagger.tags = ['Transaction']
     // #swagger.description = 'Endpoint para criar uma transação.'
-  createTransaction: async (req, res) => {
     let data_transaction = {
       id_user,
       name_transaction,
