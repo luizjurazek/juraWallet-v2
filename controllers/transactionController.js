@@ -5,6 +5,8 @@ const Transaction = require('../models/transactionModel')
 const Category = require('../models/categoryModel')
 
 const transactionController = {
+    // #swagger.tags = ['Transaction']
+    // #swagger.description = 'Endpoint para criar uma transação.'
   createTransaction: async (req, res) => {
     let data_transaction = {
       id_user,
@@ -33,6 +35,8 @@ const transactionController = {
     })
   },
   getTransactionById: async (req, res) => {
+    // #swagger.tags = ['Transaction']
+    // #swagger.description = 'Endpoint para obter uma transação por id.'
     let id_transaction = req.params.id_transaction
     let id_user = req.userId
 
@@ -65,6 +69,8 @@ const transactionController = {
     })
   },
   getTransactionsByName: async (req, res) => {
+    // #swagger.tags = ['Transaction']
+    // #swagger.description = 'Endpoint para obter uma transação por nome.'
     let id_user = req.userId
     let name_transaction = req.params.name_transaction
     console.log(id_user)
@@ -102,6 +108,8 @@ const transactionController = {
     })
   },
   getTransactionsByCategoryName: async (req, res) => {
+    // #swagger.tags = ['Transaction']
+    // #swagger.description = 'Endpoint para obter transações associadas a uma categoria.'
     let id_user = req.userId
     let name_category = req.params.name_category
 
@@ -146,6 +154,8 @@ const transactionController = {
   getTransactionByDate: async (req, res) => {},
   getTransactionsByDateRange: async (req, res) => {},
   deleteTransactionById: async (req, res) => {
+    // #swagger.tags = ['Transaction']
+    // #swagger.description = 'Endpoint para deletar uma transação.'
     let id_user = req.userId
     let id_transaction = req.params.id_transaction
 
