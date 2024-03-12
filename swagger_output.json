@@ -16,7 +16,7 @@
         "tags": [
           "Category"
         ],
-        "description": "Endpoint para obter um usuário.",
+        "description": "Endpoint para criar uma categoria.",
         "parameters": [
           {
             "name": "body",
@@ -43,7 +43,10 @@
     },
     "/getAllCategories": {
       "get": {
-        "description": "",
+        "tags": [
+          "Category"
+        ],
+        "description": "Endpoint para obter todas as categorias.",
         "responses": {
           "200": {
             "description": "OK"
@@ -53,7 +56,10 @@
     },
     "/getCategoryById/{id}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Category"
+        ],
+        "description": "Endpoint para obter uma categoria usando id.",
         "parameters": [
           {
             "name": "id",
@@ -71,7 +77,10 @@
     },
     "/editCategoryById/{id_category}/{new_name}": {
       "put": {
-        "description": "",
+        "tags": [
+          "Category"
+        ],
+        "description": "Endpoint para editar uma categoria.",
         "parameters": [
           {
             "name": "id_category",
@@ -98,7 +107,10 @@
     },
     "/deleteCategoryById/{id}": {
       "delete": {
-        "description": "",
+        "tags": [
+          "Category"
+        ],
+        "description": "Endpoint para deletar uma categoria usando id.",
         "parameters": [
           {
             "name": "id",
@@ -122,7 +134,10 @@
     },
     "/deleteAllCategories": {
       "delete": {
-        "description": "",
+        "tags": [
+          "Category"
+        ],
+        "description": "Endpoint para deletar todas as categorias.",
         "responses": {
           "200": {
             "description": "OK"

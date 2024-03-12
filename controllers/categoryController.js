@@ -4,6 +4,8 @@ const verifyAlreadyExistsItemInBD = require('../utils/verifyAlreadyExistsItemInB
 const categoryController = {
   
   createCategory: async (req, res) => {
+    // #swagger.tags = ['Category']
+    // #swagger.description = 'Endpoint para criar uma categoria.'
     const category_name = req.body.category_name
     const id_user = req.userId
 
@@ -37,6 +39,8 @@ const categoryController = {
     }
   },
   getAllCategory: async (req, res) => {
+    // #swagger.tags = ['Category']
+    // #swagger.description = 'Endpoint para obter todas as categorias.'
     const id_user = req.userId
 
     try {
@@ -60,6 +64,8 @@ const categoryController = {
     }
   },
   getCategoryById: async (req, res) => {
+    // #swagger.tags = ['Category']
+    // #swagger.description = 'Endpoint para obter uma categoria usando id.'
     const id_user = req.userId
     const id_category = req.params.id
 
@@ -83,6 +89,8 @@ const categoryController = {
     }
   },
   deleteCategoryById: async (req, res) => {
+    // #swagger.tags = ['Category']
+    // #swagger.description = 'Endpoint para deletar uma categoria usando id.'
     const id_user = req.userId
     const id_category = req.params.id
 
@@ -129,6 +137,8 @@ const categoryController = {
     }
   },
   deleteAllCategories: async (req, res) => {
+    // #swagger.tags = ['Category']
+    // #swagger.description = 'Endpoint para deletar todas as categorias.'
     const id_user = req.userId
 
     // Verificar se existem transações associadas à categoria
@@ -173,6 +183,8 @@ const categoryController = {
     }
   },
   editCategory: async (req, res) => {
+    // #swagger.tags = ['Category']
+    // #swagger.description = 'Endpoint para editar uma categoria.'
     const id_user = req.userId
     const id_category = req.params.id_category
     const category_name = req.params.new_name
