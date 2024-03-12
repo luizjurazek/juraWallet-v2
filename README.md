@@ -23,3 +23,4 @@ O objetivo do projeto juraWallet é abordar o desafio comum enfrentado por muita
 ### **Estrutura do projeto**
 Banco de dados
 [Diagramação do banco de dados MYSQL](https://raw.githubusercontent.com/luizjurazek/juraWallet-v2/main/banco-jurawallet.png)
+<img src="banco-jurawallet.png">
