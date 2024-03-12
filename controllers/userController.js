@@ -6,6 +6,8 @@ const SECRET_JWT = process.env.SECRET_JWT
 
 const userController = {
   createNewUser: async (req, res) => {
+    // #swagger.tags = ['User']
+    // #swagger.description = 'Endpoint para criar um novo usuário.'
     const {
       name,
       lastname,
@@ -91,6 +93,8 @@ const userController = {
 
   },
   loginUser: async (req, res) => {
+    // #swagger.tags = ['Transaction']
+    // #swagger.description = 'Endpoint para realizar login.'
     const {
       email,
       password
@@ -140,6 +144,8 @@ const userController = {
     return res.status(200).json(response)
   },
   deleteAccount: async (req, res) => {
+    // #swagger.tags = ['Transaction']
+    // #swagger.description = 'Endpoint para deletar um usuário.'
     const user_id = req.userId
     const user = await User.destroy({
       where: {
