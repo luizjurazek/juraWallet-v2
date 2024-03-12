@@ -1,4 +1,6 @@
-const { Op } = require('sequelize');
+const {
+  Op
+} = require('sequelize');
 const Transaction = require('../models/transactionModel')
 const Category = require('../models/categoryModel')
 
@@ -76,7 +78,7 @@ const transactionController = {
       }
     }).then(transactions => {
       console.log(transactions)
-      if(transactions.length == 0){
+      if (transactions.length == 0) {
         res.status(404).json({
           error: true,
           message: "Não foram encontradas transações.",
@@ -104,13 +106,19 @@ const transactionController = {
     let name_category = req.params.name_category
 
     Transaction.findAll({
-      where: {id_user: id_user},
+      where: {
+        id_user: id_user
+      },
       include: [{
         model: Category,
-        where: { name_category : {[Op.like]: `%${name_category}%`}}
+        where: {
+          name_category: {
+            [Op.like]: `%${name_category}%`
+          }
+        }
       }]
     }).then(transactions => {
-      if(transactions.length == 0){
+      if (transactions.length == 0) {
         res.status(404).json({
           error: true,
           message: "Não foram encontradas transações relacionadas a categoria.",
@@ -126,6 +134,7 @@ const transactionController = {
         })
       }
     }).catch(err => {
+      console.error(err)
       res.status(500).json({
         error: true,
         message: "Houve um erro no servidor.",
@@ -136,7 +145,49 @@ const transactionController = {
   },
   getTransactionByDate: async (req, res) => {},
   getTransactionsByDateRange: async (req, res) => {},
-  deleteTransactionById: async (req, res) => {},
+  deleteTransactionById: async (req, res) => {
+    let id_user = req.userId
+    let id_transaction = req.params.id_transaction
+
+
+    try {
+      const transactionToDestroy = await Transaction.findOne({
+        where: {
+          id_user,
+          id_transaction
+        }
+      })
+
+      if (!transactionToDestroy) {
+        console.error('Registro não encontrado')
+        res.status(404).json({
+          error: true,
+          message: "Houve um erro ao deletar a transação.",
+          id_transaction: id_transaction
+        })
+      } else {
+        await Transaction.destroy({
+          where: {
+            id_user,
+            id_transaction
+          }
+        })
+  
+        res.status(200).json({
+          error: false,
+          message: "Transação deletada com sucesso.",
+          id_transaction: id_transaction,
+          transaction: transactionToDestroy.dataValues
+        })
+      }
+    } catch (err) {
+      res.status(500).json({
+        error: true,
+        message: "Houve um erro no servidor.",
+        error: err
+      })
+    }
+  }
 }
 
 module.exports = transactionController
