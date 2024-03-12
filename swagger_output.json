@@ -153,7 +153,10 @@
     },
     "/createTransaction": {
       "post": {
-        "description": "",
+        "tags": [
+          "Transaction"
+        ],
+        "description": "Endpoint para criar uma transação.",
         "parameters": [
           {
             "name": "body",
