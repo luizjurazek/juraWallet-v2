@@ -355,7 +355,7 @@
     "/loginUser": {
       "post": {
         "tags": [
-          "Transaction"
+          "User"
         ],
         "description": "Endpoint para realizar login.",
         "parameters": [
@@ -388,7 +388,7 @@
     "/deleteAccount": {
       "delete": {
         "tags": [
-          "Transaction"
+          "User"
         ],
         "description": "Endpoint para deletar um usuário.",
         "parameters": [

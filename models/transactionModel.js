@@ -19,7 +19,7 @@ let Transaction = sequelize.define('Transaction', {
         allowNull: false
     },
     date_transaction: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false
     },
     id_user: {
