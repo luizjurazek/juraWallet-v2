@@ -151,40 +151,38 @@ const transactionController = {
     })
 
   },
-  getTransactionByDate: async (req, res) => {
+  getTransactionByDate: async (req, res, next) => {
     // #swagger.tags = ['Transaction']
     // #swagger.description = 'Endpoint para obter transações associadas a uma data.'
     let dateToFind = req.params.date
     let id_user = req.userId
 
-    const transactionByDate = Transaction.findAll({
-      where: {
-        id_user,
-        date_transaction: {
-          [Op.eq]: dateToFind
+    try {
+      const transactionByDate = await Transaction.findAll({
+        where: {
+          id_user,
+          date_transaction: {
+            [Op.eq]: dateToFind
+          }
         }
-      }
-    }).then(data => {
-      if(data.length === 0){
-        res.status(404).json({
-          error: true,
-          message: `Não foram encontradas transações na data ${dateToFind}`,
-          date: dateToFind
-        })} else {
-          res.status(200).json({
-            error: false,
-            message: `Foram encontradas ${data.length} transações associadas a data ${dateToFind}`,
-            transaction: data
-          })
-        }
-      }).catch(err => {
-        // throw Error(err)
-        res.status(500).json({
-          error: true,
-          message: "Houve um erro interno."
-        })
       })
 
+      if (transactionByDate.length == 0) {
+        let error = new Error(`Não foram encontradas transações com a data ${dateToFind}.`)
+        error.statusCode = 404
+        throw error
+      }
+
+      return res.status(200).json({
+        error: false,
+        message: `Foram encontradas ${transactionByDate.length} transações associadas a data ${dateToFind}`,
+        transaction: transactionByDate
+      })
+
+
+    } catch (error) {
+      next(error)
+    }
   },
   getTransactionsByDateRange: async (req, res) => {},
   deleteTransactionById: async (req, res) => {
@@ -216,7 +214,7 @@ const transactionController = {
             id_transaction
           }
         })
-  
+
         res.status(200).json({
           error: false,
           message: "Transação deletada com sucesso.",
