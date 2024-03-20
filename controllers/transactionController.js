@@ -184,7 +184,42 @@ const transactionController = {
       next(error)
     }
   },
-  getTransactionsByDateRange: async (req, res) => {},
+  getTransactionsByDateRange: async (req, res, next) => {
+    // #swagger.tags = ['Transaction']
+    // #swagger.description = 'Endpoint para selecionar todas as transações entre duas datas.'
+    let id_user = req.userId
+    let initial_date = req.params.initial_date
+    let final_date = req.params.final_date
+
+    try {
+      const transactionInRangeDate = await Transaction.findAll({
+        where: {
+          id_user,
+          date_transaction: {
+            [Op.between]: [initial_date, final_date]
+          }
+        }
+      })
+
+      if(transactionInRangeDate.length === 0){
+        const error = new Error(`Não foram encontradas transações entre as datas ${initial_date} e ${final_date}.`)
+        error.statusCode = 404
+        throw error
+      }
+      
+      return res.status(200).json({
+        error: false,
+        message: `Foram encontradas ${transactionInRangeDate.length} transações entre as datas ${initial_date} e ${final_date}.`,
+        initial_date,
+        final_date,
+        transactionInRangeDate
+      })
+
+    } catch (error){
+      next(error)
+    }
+
+  },
   deleteTransactionById: async (req, res) => {
     // #swagger.tags = ['Transaction']
     // #swagger.description = 'Endpoint para deletar uma transação.'
