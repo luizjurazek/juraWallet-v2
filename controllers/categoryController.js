@@ -1,5 +1,4 @@
 const Category = require('../models/categoryModel')
-const verifyAlreadyExistsItemInBD = require('../utils/verifyAlreadyExistsItemInBD')
 
 const categoryController = {
   
@@ -9,9 +8,14 @@ const categoryController = {
     const category_name = req.body.category_name
     const id_user = req.userId
 
-    const CategoryAlreadyExists = await verifyAlreadyExistsItemInBD("categories", "name_category", id_user, category_name)
+    const categoryInBD = await Category.findAll({
+      where: {
+        id_user,
+        name_category: category_name
+      }
+    })
 
-    if (!CategoryAlreadyExists) {
+    if (categoryInBD.length == 0) {
       try {
         const createdCategory = await Category.create({
           name_category: category_name,
@@ -94,12 +98,6 @@ const categoryController = {
     const id_user = req.userId
     const id_category = req.params.id
 
-
-    // Verificar se existem transações associadas à categoria
-    // const checkTransactionsQuery = 'SELECT COUNT(*) as count FROM transaction WHERE id_user = ?';
-    // const checkResult = await connection.promise().query(checkTransactionsQuery, id_user);
-    // const transactionCount = checkResult[0][0].count;
-
     try {
       const categoryDeleted = await Category.destroy({
         where: {
@@ -140,11 +138,6 @@ const categoryController = {
     // #swagger.tags = ['Category']
     // #swagger.description = 'Endpoint para deletar todas as categorias.'
     const id_user = req.userId
-
-    // Verificar se existem transações associadas à categoria
-    // const checkTransactionsQuery = 'SELECT COUNT(*) as count FROM transaction WHERE id_user = ?';
-    // const checkResult = await connection.promise().query(checkTransactionsQuery, id_user);
-    // const transactionCount = checkResult[0][0].count;
 
     try {
       const deletedCategories = await Category.destroy({
