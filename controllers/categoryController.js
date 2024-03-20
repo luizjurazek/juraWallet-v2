@@ -1,8 +1,7 @@
 const Category = require('../models/categoryModel')
 
 const categoryController = {
-  
-  createCategory: async (req, res) => {
+  createCategory: async (req, res, next) => {
     // #swagger.tags = ['Category']
     // #swagger.description = 'Endpoint para criar uma categoria.'
     const category_name = req.body.category_name
@@ -15,31 +14,27 @@ const categoryController = {
       }
     })
 
-    if (categoryInBD.length == 0) {
-      try {
-        const createdCategory = await Category.create({
-          name_category: category_name,
-          id_user: id_user
-        })
-
-        const response = {
-          error: false,
-          menssage: "Categoria cadastrada com sucesso.",
-          category: category_name
-        }
-
-        res.status(201).json(response)
-      } catch (error) {
+    try {
+      if (!categoryInBD.length == 0) {
+        const error = new Error("Categoria já cadastrada.")
+        error.statusCode = 400
         throw error
-      }
-    } else {
+      } 
+
+      const createdCategory = await Category.create({
+        name_category: category_name,
+        id_user: id_user
+      })
+
       const response = {
-        error: true,
-        menssage: "Categoria já existente.",
+        error: false,
+        menssage: "Categoria cadastrada com sucesso.",
         category: category_name
       }
 
-      res.status(400).json(response)
+      return res.status(201).json(response)
+    } catch (error) {
+      next(error) 
     }
   },
   getAllCategory: async (req, res) => {
