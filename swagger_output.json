@@ -277,6 +277,54 @@
         }
       }
     },
+    "/getTransactionByDate/{date}": {
+      "get": {
+        "tags": [
+          "Transaction"
+        ],
+        "description": "Endpoint para obter transações associadas a uma data.",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/getTransactionsByDateRange/{initial_date}/{final_date}": {
+      "get": {
+        "tags": [
+          "Transaction"
+        ],
+        "description": "Endpoint para selecionar todas as transações entre duas datas.",
+        "parameters": [
+          {
+            "name": "initial_date",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "final_date",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/deleteTransactionById/{id_transaction}": {
       "delete": {
         "tags": [

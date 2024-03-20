@@ -34,6 +34,37 @@ const transactionController = {
       })
     })
   },
+  getAllTransactions: async (req, res, next) => {
+    // #swagger.tags = ['Transaction']
+    // #swagger.description = 'Endpoint para buscar todas as transação.'
+    let id_user = req.userId
+
+    try {
+      const transactions = await Transaction.findAll({
+        where: {
+          id_user
+        }
+      })
+
+      if(transactions.length == 0){
+        const error = new Error("Não foram encontradas transações")
+        error.statusCode = 404
+
+        throw error
+      }
+
+      return res.status(200).json({
+        error: false,
+        message: `Foram encontradas ${transactions.length} transações.`,
+        transactions
+      })
+
+    } catch (error){
+      next(error)
+    }
+
+
+  },
   getTransactionById: async (req, res) => {
     // #swagger.tags = ['Transaction']
     // #swagger.description = 'Endpoint para obter uma transação por id.'
