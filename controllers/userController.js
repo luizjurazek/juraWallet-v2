@@ -1,12 +1,14 @@
 const User = require('../models/userModel')
-const { verifyEmailInUse } = require('../utils/verifyData')
+const {
+  verifyEmailInUse
+} = require('../utils/verifyData')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const SECRET_JWT = process.env.SECRET_JWT
 
 const userController = {
-  createNewUser: async (req, res) => {
-    
+  createNewUser: async (req, res, next) => {
+
     const {
       name,
       lastname,
@@ -18,82 +20,57 @@ const userController = {
     // #swagger.description = 'Endpoint para criar um novo usuário.'
 
     const password = await bcrypt.hash(req.body.password, 8)
+    try {
+      if (await verifyEmailInUse(email)) {
+        const error = new Error("Email já utilizado.")
+        error.statusCode = 400
 
-    if (await verifyEmailInUse(email)) {
-      const response = {
-        error: true,
-        mensagem: "Email já utilizado!"
+        throw error
       }
-      res.status(404).json(response)
 
-    // Criar verificacao dos dados do usuario 
-    //  
-    // 
-    // 
-    // 
-    // 
-    } else {
-      try {
-        const newUser = await User.create({
-          name_user: name,
-          lastname_user: lastname,
-          phonenumber_user: phonenumber,
-          email_user: email,
-          password_user: password,
-          birthday_user: birthday
-        })
+      const newUser = await User.create({
+        name_user: name,
+        lastname_user: lastname,
+        phonenumber_user: phonenumber,
+        email_user: email,
+        password_user: password,
+        birthday_user: birthday
+      })
 
-        if (newUser) {
-          console.log(newUser)
-          const response = {
-            error: false,
-            mensagem: "Usuário cadastrado com sucesso!",
-            user: {
-              id: newUser.dataValues.id_user,
-              name: name,
-              lastname: lastname,
-              email: email,
-              phonenumber: phonenumber,
-              birthday: birthday
-            }
+      if (newUser) {
+        const response = {
+          error: false,
+          mensagem: "Usuário cadastrado com sucesso!",
+          user: {
+            id: newUser.dataValues.id_user,
+            name: name,
+            lastname: lastname,
+            email: email,
+            phonenumber: phonenumber,
+            birthday: birthday
           }
-
-          // Log de sucesso e envio da resposta
-          console.log(response)
-          res.status(201).json(response)
-        } else {
-          const response = {
-            error: true,
-            mensagem: "Houve um erro ao cadastrar o usuário!",
-            user: {
-              name: name,
-              lastname: lastname,
-              email: email,
-              phonenumber: phonenumber,
-              birthday: birthday
-            }
-          }
-
-          // Log de sucesso e envio da resposta
-          console.log(response)
-          res.status(404).json(response)
         }
-
-      } catch (error) {
-        // Prepara a resposta de erro
+        // Log de sucesso e envio da resposta
+        return res.status(201).json(response)
+      } else {
         const response = {
           error: true,
-          mensagem: "houve um erro no servidor!"
+          mensagem: "Houve um erro ao cadastrar o usuário!",
+          user: {
+            name: name,
+            lastname: lastname,
+            email: email,
+            phonenumber: phonenumber,
+            birthday: birthday
+          }
         }
-
-        // Log de erro e envio da resposta
-        console.log("Erro ao criar novo usuário: " + error)
-        res.status(500).json(response)
+        return res.status(404).json(response)
       }
+    } catch (error) {
+      next(error)
     }
-
   },
-  loginUser: async (req, res) => {
+  loginUser: async (req, res, next) => {
     // #swagger.tags = ['User']
     // #swagger.description = 'Endpoint para realizar login.'
     const {
@@ -102,72 +79,77 @@ const userController = {
     } = req.body
 
     // Consulta o banco para procurar as ocorrencias do email
-    const user = await User.findOne({
-      where: { email_user: email }
-    })
+    try {
+      const user = await User.findOne({
+        where: {
+          email_user: email
+        }
+      })
 
-    // Caso a query seja igual a 0 o usuário nao foi encontrado
-    if (!user) {
-      const response = {
-        error: true,
-        message: "Usuário não encontrado."
+
+      if (!user) {
+        const error = new Error("Usuário não encontrado.")
+        error.statusCode = 404
+
+        throw error
       }
 
-      return res.status(400).json(response)
-    }
 
-    // compara a user.password que veio do banco com a password enviada na req de login
-    // caso seja diferente retorno um status 400
-    if (!(await bcrypt.compare(password, user.dataValues.password_user))) {
-      const response = {
-        erro: true,
-        message: "Email ou senha incorreto"
+      // compara a user.password que veio do banco com a password enviada na req de login
+      // caso seja diferente retorno um status 400
+      if (!(await bcrypt.compare(password, user.dataValues.password_user))) {
+        const error = new Error("Email ou senha incorretos.")
+        error.statusCode = 404
+
+        throw error
       }
-      return res.status(400).json(response)
-    }
 
-    // Dias para expirar o token gerado abaixo
-    const SEVEN_DAYS_MILISECONDS = 7 * 24 * 60 * 60 * 1000;
-    // gera o token de autenticacao jwt
-    const token = jwt.sign({
-      user_id: user.id_user
-    }, SECRET_JWT, {
-      expiresIn: SEVEN_DAYS_MILISECONDS // 7 dias
-    })
+      // Dias para expirar o token gerado abaixo
+      const SEVEN_DAYS_MILISECONDS = 7 * 24 * 60 * 60 * 1000;
+      // gera o token de autenticacao jwt
+      const token = jwt.sign({
+        user_id: user.id_user
+      }, SECRET_JWT, {
+        expiresIn: SEVEN_DAYS_MILISECONDS // 7 dias
+      })
 
-    const response = {
-      error: false,
-      email: user.email,
-      user_id: user.id_user,
-      token: token
-    }
-
-    return res.status(200).json(response)
-  },
-  deleteAccount: async (req, res) => {
-    // #swagger.tags = ['User']
-    // #swagger.description = 'Endpoint para deletar um usuário.'
-    const user_id = req.userId
-    const user = await User.destroy({
-      where: {
-        id_user: user_id
-      }
-    })
-
-    if (user == 1) {
       const response = {
         error: false,
-        message: "Conta deletada com sucesso."
+        email: user.email,
+        user_id: user.id_user,
+        token: token
       }
 
       return res.status(200).json(response)
-    } else {
-      const response = {
-        error: true,
-        message: "Houve um erro ao deletar a conta."
+    } catch (error) {
+      next(error)
+    }
+  },
+  deleteAccount: async (req, res, next) => {
+    // #swagger.tags = ['User']
+    // #swagger.description = 'Endpoint para deletar um usuário.'
+    const user_id = req.userId
+
+    try {
+      const user = await User.destroy({
+        where: {
+          id_user: user_id
+        }
+      })
+
+      if (user != 1) {
+        const error = new Error("Houve um erro ao deletar o usuário.")
+        error.statusCode = 404
+
+        throw error
       }
 
-      return res.status(400).json(response)
+      return res.status(200).json({
+        error: false,
+        message: "Conta deletada com sucesso."
+      })
+    } catch (error) {
+      next(error)
     }
   }
 }
