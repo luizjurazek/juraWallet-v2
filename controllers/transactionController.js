@@ -1,6 +1,4 @@
-const {
-  Op
-} = require('sequelize');
+const { Op } = require('sequelize');
 const Transaction = require('../models/transactionModel')
 const Category = require('../models/categoryModel')
 
