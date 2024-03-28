@@ -3,6 +3,6 @@ const router = express.Router()
 
 const typeOfTransactionController = require('../controllers/typeOfTransactionController')
 
-router.post('/createtypeoftransaction/:name', typeOfTransactionController.createTypeOfTransaction)
+router.post('/create-type-of-transaction/:name', typeOfTransactionController.createTypeOfTransaction)
 
 module.exports = router
