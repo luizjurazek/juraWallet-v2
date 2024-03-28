@@ -28,3 +28,5 @@ const typeOfTransactionController = {
     }
   }
 }
+
+module.exports = typeOfTransactionController
