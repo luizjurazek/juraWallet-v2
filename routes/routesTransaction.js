@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 const transactionController = require('../controllers/transactionController')
+const errorHandler = require('../middlewares/errorHandler')
 
 router.post('/createTransaction', transactionController.createTransaction)
 router.get('/getalltransaction', transactionController.getAllTransactions)
@@ -12,5 +13,7 @@ router.get('/getTransactionByDate/:date', transactionController.getTransactionBy
 router.get('/getTransactionsByDateRange/:initial_date/:final_date', transactionController.getTransactionsByDateRange)
 
 router.delete('/deleteTransactionById/:id_transaction', transactionController.deleteTransactionById)
+
+router.use(errorHandler)
 
 module.exports = router
