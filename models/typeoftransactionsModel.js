@@ -3,10 +3,11 @@ const { DataTypes } = require('sequelize')
 
 const User = require('../models/userModel')
 
-const typeOftransaction = sequelize.define('typeOftransaction', {
+const TypeOftransaction = sequelize.define('typeOftransaction', {
   id_typeOfTransaction: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    primaryKey: true,
     autoIncrement: true
   },
   name_typeOfTransaction: {
@@ -25,6 +26,6 @@ const typeOftransaction = sequelize.define('typeOftransaction', {
   timestamps: false, // Isso habilita a criação automática dos campos createdAt e updatedAt
 })
 
-typeOftransaction.belongsTo(User, {foreignKey: 'id_user'})
+TypeOftransaction.belongsTo(User, { foreignKey: 'id_user' })
 
-module.exports = typeOftransaction
+module.exports = TypeOftransaction
