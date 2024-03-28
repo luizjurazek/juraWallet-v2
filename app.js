@@ -18,11 +18,14 @@ app.set('views', './views')
 // Rotas do app
 const routerUsers = require('./routes/routesUser')
 const routerCategory = require('./routes/routesCategory')
-const routerTranction = require('./routes/routesTransaction')
+const routerTransaction = require('./routes/routesTransaction')
+const routerTypeOfTransaction = require('./routes/routesTypeOfTransaction')
 
 app.use('/users', routerUsers)
 app.use('/category', verifyJWT, routerCategory)
-app.use('/transaction', verifyJWT, routerTranction)
+app.use('/transaction', verifyJWT, routerTransaction)
+app.use('/type-of-transaction', verifyJWT, routerTypeOfTransaction)
+
 
 // errorHandler para tratar os erros das urls
 app.use(errorHandler)
