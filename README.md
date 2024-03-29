@@ -1,5 +1,5 @@
 # JuraWallet
-
+<img src="logo-jurawallet.png">
 ### Objetivo
 
 O objetivo do projeto juraWallet é abordar o desafio comum enfrentado por muitas pessoas em relação à organização financeira. O juraWallet oferece uma plataforma centralizada para registrar e monitorar todas as transações financeiras dos usuários, fornecendo uma visão completa dos gastos ao longo do tempo.
