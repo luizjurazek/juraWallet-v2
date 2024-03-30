@@ -9,7 +9,6 @@ const SECRET_JWT = process.env.SECRET_JWT
 
 const userController = {
   createNewUser: async (req, res, next) => {
-
     const {
       name,
       lastname,
@@ -24,7 +23,10 @@ const userController = {
     try {
       const verifyData = await verifyUserData(req.body)
       if(verifyData){
-        return res.status(400).json(verifyData)
+        const error = new Error(verifyData.message)
+        error.statusCode = verifyData.statusCode
+
+        throw error
       }
 
       if (await verifyEmailInUse(email)) {
@@ -70,7 +72,7 @@ const userController = {
             birthday: birthday
           }
         }
-        return res.status(404).json(response)
+        return res.status(400).json(response)
       }
     } catch (error) {
       next(error)
@@ -105,7 +107,7 @@ const userController = {
       // caso seja diferente retorno um status 400
       if (!(await bcrypt.compare(password, user.dataValues.password_user))) {
         const error = new Error("Email ou senha incorretos.")
-        error.statusCode = 404
+        error.statusCode = 400
 
         throw error
       }
