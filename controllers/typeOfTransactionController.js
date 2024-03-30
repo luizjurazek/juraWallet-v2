@@ -20,11 +20,39 @@ const typeOfTransactionController = {
         throw error
       }
 
-      return res.status(200).json({
+      return res.status(201).json({
         error: false,
         message: "Tipo de transação criada com sucesso.",
         type_of_transaction: name_of_type_of_transaction
       })
+    } catch (error){
+      next(error)
+    }
+  },
+  getTypeOfTransaction: async (req, res, next) => {
+    // #swagger.tags = ['Type of transaction']
+    // #swagger.description = 'Endpoint para buscar os tipos de transação.'
+    let id_user = req.userId
+
+    try {
+      const allTypesOfTransaction = await TypeOfTransactionModel.findAll({
+        where: {
+          id_user
+        }
+      })
+
+      if(!allTypesOfTransaction){
+        const error = new Error("Não foram encontrados tipos de transações cadastradas.")
+        error.statusCode = 404
+        throw error
+      }
+
+      return res.status(200).json({
+        error: false,
+        message: `Foram encontrados ${allTypesOfTransaction.length} tipos de transações.`,
+        type_of_transactions: allTypesOfTransaction
+      })
+
     } catch (error){
       next(error)
     }
