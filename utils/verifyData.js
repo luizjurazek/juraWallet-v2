@@ -20,7 +20,6 @@ async function verifyEmailInUse(email) {
     return false
 }
 
-
 async function verifyUserData(user) {
     const { name, lastname, phonenumber, email, birthday, password } = user
 
@@ -99,7 +98,7 @@ async function verifyUserData(user) {
         const error = {
             error: true,
             statusCode: 400,
-            message: "a data de nascimento deve seguir o padrão y-m-d"
+            message: "a data de nascimento deve seguir o padrão y-m-d ou yyyy-mm-dd"
         }
         return error
     }
@@ -112,11 +111,43 @@ async function verifyUserData(user) {
         }
         return error
     }
+}
+
+async function verifyTransactionData(transaction){
+    const standardDate = /^\d{4}-\d{2}-\d{2}$/;
+    if(transaction.name_transaction === null || transaction.name === ""){
+        const error = {
+            error: true,
+            statusCode: 400,
+            message: "Preencha o nome"
+        }
+        return error
+    }
+
+    if(transaction.price_transaction === null || typeof transaction.price_transaction !== 'number'){
+        const error = {
+            error: true,
+            statusCode: 400,
+            message: "O campo price_transaction precisa ser diferente de null e ser um Number"
+        }
+        return error
+    }
+
+    if(!standardDate.test(transaction.date_transaction)){
+        const error = {
+            error: true,
+            statusCode: 400,
+            message: "a data de nascimento deve seguir o padrão y-m-d ou yyyy-mm-dd"
+        }
+        return error
+    }
+
 
 }
 
 
 module.exports = {
     verifyEmailInUse,
-    verifyUserData
+    verifyUserData,
+    verifyTransactionData
 }
