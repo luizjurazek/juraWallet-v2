@@ -1,6 +1,7 @@
 const User = require('../models/userModel')
 const {
-  verifyEmailInUse
+  verifyEmailInUse,
+  verifyUserData
 } = require('../utils/verifyData')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
@@ -16,11 +17,16 @@ const userController = {
       email,
       birthday
     } = req.body
-    // #swagger.tags = ['User']
-    // #swagger.description = 'Endpoint para criar um novo usuário.'
+    // #swagger.tags =' ['User']
+    // #swagger.description = 'Endpoint para criar um novo usuário.
 
     const password = await bcrypt.hash(req.body.password, 8)
     try {
+      const verifyData = await verifyUserData(req.body)
+      if(verifyData){
+        return res.status(400).json(verifyData)
+      }
+
       if (await verifyEmailInUse(email)) {
         const error = new Error("Email já utilizado.")
         error.statusCode = 400
