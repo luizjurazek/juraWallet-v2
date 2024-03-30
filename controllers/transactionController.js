@@ -2,8 +2,10 @@ const { Op } = require('sequelize');
 const Transaction = require('../models/transactionModel')
 const Category = require('../models/categoryModel')
 
+const { verifyTransactionData } = require('../utils/verifyData')
+
 const transactionController = {
-  createTransaction: async (req, res) => {
+  createTransaction: async (req, res, next) => {
     // #swagger.tags = ['Transaction']
     // #swagger.description = 'Endpoint para criar uma transação.'
     let data_transaction = {
@@ -16,21 +18,51 @@ const transactionController = {
     } = req.body;
     data_transaction.id_user = req.userId
 
-    const createdTransaction = await Transaction.create({
-      name_transaction: data_transaction.name_transaction,
-      price_transaction: data_transaction.price_transaction,
-      date_transaction: data_transaction.date_transaction,
-      id_user: data_transaction.id_user,
-      id_category: data_transaction.id_category,
-      id_typeOfTransaction: data_transaction.id_typeOftransaction
-    }).then(transaction => {
-      res.status(200).json(transaction)
-    }).catch(err => {
-      console.log("Erro: " + err.message)
-      res.status(500).json({
-        error: "Erro ao processar a transação."
+    try {
+      const checkData = await verifyTransactionData(data_transaction)
+      if(checkData){
+        const error = new Error(checkData.message)
+        error.statusCode = checkData.statusCode
+        throw error
+      }
+
+      const createdTransaction = await Transaction.create({
+        name_transaction: data_transaction.name_transaction.trim(),
+        price_transaction: data_transaction.price_transaction,
+        date_transaction: data_transaction.date_transaction,
+        id_user: data_transaction.id_user,
+        id_category: data_transaction.id_category,
+        id_typeOfTransaction: data_transaction.id_typeOftransaction
+      })  
+
+      if(createdTransaction.length === 0){
+        const error = new Error("Houve um erro ao cadastrar a transação.")
+        error.statusCode = 400
+        throw error
+      }
+      
+      return res.status(201).json({
+        error: false,
+        message: "Transação cadastrada com sucesso.",
+        createdTransaction
       })
-    })
+      
+    } catch (error){
+      console.log(error)
+      if(error.name === 'SequelizeForeignKeyConstraintError'){
+        return res.status(400).json({
+          error: true,
+          message: "Não foi possível adicionar a transação, uma foreign key falhou.",
+          field: error.fields[0],
+          index: error.index,
+          value: error.value
+        })
+      }
+       else {
+        next(error)
+      }
+    }
+
   },
   getAllTransactions: async (req, res, next) => {
     // #swagger.tags = ['Transaction']
