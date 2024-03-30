@@ -14,7 +14,7 @@ const typeOfTransactionController = {
         name_typeOfTransaction: name_of_type_of_transaction.trim()
       })
 
-      if(!typeOfTransaction){
+      if (!typeOfTransaction) {
         const error = new Error("Houve um erro ao cadastrar o novo tipo de transação.")
         error.statusCode = 400
         throw error
@@ -25,7 +25,7 @@ const typeOfTransactionController = {
         message: "Tipo de transação criada com sucesso.",
         type_of_transaction: name_of_type_of_transaction
       })
-    } catch (error){
+    } catch (error) {
       next(error)
     }
   },
@@ -41,7 +41,7 @@ const typeOfTransactionController = {
         }
       })
 
-      if(!allTypesOfTransaction){
+      if (!allTypesOfTransaction) {
         const error = new Error("Não foram encontrados tipos de transações cadastradas.")
         error.statusCode = 404
         throw error
@@ -53,7 +53,7 @@ const typeOfTransactionController = {
         type_of_transactions: allTypesOfTransaction
       })
 
-    } catch (error){
+    } catch (error) {
       next(error)
     }
   },
@@ -70,20 +70,31 @@ const typeOfTransactionController = {
           id_typeOfTransaction: id_type_of_transaction
         }
       })
-      
-      if(existItem.length === 0){
+
+      if (existItem.length === 0) {
         const error = new Error('Tipo de transação não encontrada.')
-        error.statusCode = 400
+        error.statusCode = 404
         throw error
       }
 
+      const destroiedItem = await TypeOfTransactionModel.destroy({
+        where: {
+          id_user,
+          id_typeOfTransaction: id_type_of_transaction
+        }
+      })
+
+      if (destroiedItem !== 1) {
+        const error = new Error('Houve um erro ao deleter o tipo de transação.')
+        error.statusCode = 400
+        throw error
+      }
       return res.status(200).json({
         error: false,
         message: "Tipo de transação deletada com sucesso!",
         type_of_transaction: existItem
       })
-
-    } catch (error){
+    } catch (error) {
       next(error)
     }
   }
