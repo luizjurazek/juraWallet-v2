@@ -34,9 +34,6 @@
         "responses": {
           "201": {
             "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
           }
         }
       }
@@ -192,6 +189,19 @@
           },
           "500": {
             "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/getalltransaction": {
+      "get": {
+        "tags": [
+          "Transaction"
+        ],
+        "description": "Endpoint para buscar todas as transação.",
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -354,9 +364,7 @@
     },
     "/createNewUser": {
       "post": {
-        "tags": [
-          "User"
-        ],
+        "tags": [],
         "description": "Endpoint para criar um novo usuário.",
         "parameters": [
           {
@@ -391,11 +399,8 @@
           "201": {
             "description": "Created"
           },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
@@ -426,9 +431,6 @@
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
           }
         }
       }
@@ -449,9 +451,6 @@
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
