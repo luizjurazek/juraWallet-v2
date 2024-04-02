@@ -4,15 +4,15 @@ const router = express.Router()
 const transactionController = require('../controllers/transactionController')
 const errorHandler = require('../middlewares/errorHandler')
 
-router.post('/createTransaction', transactionController.createTransaction)
-router.get('/getalltransaction', transactionController.getAllTransactions)
-router.get('/getTransactionById/:id_transaction', transactionController.getTransactionById)
-router.get('/getTransactionsByName/:name_transaction', transactionController.getTransactionsByName)
-router.get('/getTransactionsByCategoryName/:name_category', transactionController.getTransactionsByCategoryName)
-router.get('/getTransactionByDate/:date', transactionController.getTransactionByDate)
-router.get('/getTransactionsByDateRange/:initial_date/:final_date', transactionController.getTransactionsByDateRange)
+router.post('/create-transaction', transactionController.createTransaction)
+router.get('/get-all-transaction', transactionController.getAllTransactions)
+router.get('/get-transaction-by-id/:id_transaction', transactionController.getTransactionById)
+router.get('/get-transactions-by-name/:name_transaction', transactionController.getTransactionsByName)
+router.get('/get-transactions-by-category-name/:name_category', transactionController.getTransactionsByCategoryName)
+router.get('/get-transaction-by-date/:date', transactionController.getTransactionByDate)
+router.get('/get-transactions-by-date-range/:initial_date/:final_date', transactionController.getTransactionsByDateRange)
 
-router.delete('/deleteTransactionById/:id_transaction', transactionController.deleteTransactionById)
+router.delete('/delete-transaction-by-id/:id_transaction', transactionController.deleteTransactionById)
 
 router.use(errorHandler)
 
