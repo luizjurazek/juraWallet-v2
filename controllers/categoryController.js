@@ -34,7 +34,17 @@ const categoryController = {
 
       return res.status(201).json(response)
     } catch (error) {
-      next(error) 
+      if(error.name === 'SequelizeForeignKeyConstraintError'){
+        return res.status(400).json({
+          error: true,
+          message: "Não foi possível adicionar a transação, uma foreign key falhou.",
+          field: error.fields[0],
+          index: error.index,
+          value: error.value
+        })
+      } else {
+        next(error)
+      } 
     }
   },
   getAllCategory: async (req, res) => {

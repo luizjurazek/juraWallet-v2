@@ -46,7 +46,7 @@ const transactionController = {
         message: "Transação cadastrada com sucesso.",
         createdTransaction
       })
-      
+
     } catch (error){
       console.log(error)
       if(error.name === 'SequelizeForeignKeyConstraintError'){
@@ -57,8 +57,7 @@ const transactionController = {
           index: error.index,
           value: error.value
         })
-      }
-       else {
+      } else {
         next(error)
       }
     }
