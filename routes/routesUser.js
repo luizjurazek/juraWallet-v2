@@ -6,9 +6,9 @@ const errorHandler = require('../middlewares/errorHandler')
 
 const userController = require('../controllers/userController')
 
-router.post('/createNewUser', userController.createNewUser)
-router.post('/loginUser', userController.loginUser)
-router.delete('/deleteAccount', verifyJWT, userController.deleteAccount)
+router.post('/create-new-user', userController.createNewUser)
+router.post('/login', userController.loginUser)
+router.delete('/delete-account', verifyJWT, userController.deleteAccount)
 
 router.use(errorHandler)
 
