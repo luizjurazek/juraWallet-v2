@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const swaggerUi = require('swagger-ui-express')
 const swaggerFile = require('./swagger_output.json')
+const process = require('node:process')
 
 const PORT = 3000
 
@@ -30,10 +31,22 @@ app.use('/type-of-transaction', verifyJWT, routerTypeOfTransaction)
 // errorHandler para tratar os erros das urls
 app.use(errorHandler)
 
+process.on('uncaughtException', (err, origin) => {
+    console.error(`Caught exception: ${err}\n` +
+        `Exception origin: ${origin}\n`, )
+    // Send error response to the user
+    res.status(500).json({
+        error: 'Something went wrong.'
+    });
+
+    // Exit the process as it's in an unstable state
+    process.exit(1);
+});
+
 app.get('/', (req, res) => {
     res.render('pages/index')
 })
 
-app.listen(PORT, ()=>{
+app.listen(PORT, () => {
     console.log("Servidor rodando na porta: " + PORT)
 })
