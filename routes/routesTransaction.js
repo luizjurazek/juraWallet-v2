@@ -14,6 +14,8 @@ router.get('/get-transactions-by-date-range/:initial_date/:final_date', transact
 
 router.delete('/delete-transaction-by-id/:id_transaction', transactionController.deleteTransactionById)
 
+// router.patch('edit-transaction')
+
 router.use(errorHandler)
 
 module.exports = router

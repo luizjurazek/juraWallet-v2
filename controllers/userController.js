@@ -32,7 +32,7 @@ const userController = {
       if (await verifyEmailInUse(email)) {
         const error = new Error("Email já utilizado.")
         error.statusCode = 400
-
+        
         throw error
       }
 
