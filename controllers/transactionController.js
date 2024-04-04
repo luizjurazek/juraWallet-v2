@@ -3,6 +3,7 @@ const Transaction = require('../models/transactionModel')
 const Category = require('../models/categoryModel')
 
 const { verifyTransactionData } = require('../utils/verifyData')
+const { sumAmountTransaction } = require('../utils/sumAmountTransaction')
 
 const transactionController = {
   createTransaction: async (req, res, next) => {
@@ -82,9 +83,13 @@ const transactionController = {
         throw error
       }
 
+      let amount = await sumAmountTransaction(transactions)
+
       return res.status(200).json({
         error: false,
         message: `Foram encontradas ${transactions.length} transações.`,
+        totalTransactions: transactions.length,
+        amount,
         transactions
       })
 
@@ -94,122 +99,112 @@ const transactionController = {
 
 
   },
-  getTransactionById: async (req, res) => {
+  getTransactionById: async (req, res, next) => {
     // #swagger.tags = ['Transaction']
     // #swagger.description = 'Endpoint para obter uma transação por id.'
     let id_transaction = req.params.id_transaction
     let id_user = req.userId
 
-    const selectedTransaction = await Transaction.findOne({
-      where: {
-        id_transaction: id_transaction,
-        id_user: id_user
-      }
-    }).then((transaction => {
-      if (transaction == null) {
-        res.status(404).json({
-          error: true,
-          message: "Houve um erro ao buscar a transação.",
-          id_transaction
-        })
-      } else {
-        res.status(200).json({
-          error: false,
-          message: "Transação localizada com sucesso.",
-          transaction: transaction.dataValues
-        })
-      }
-
-    })).catch(err => {
-      console.log("Erro: " + err)
-      res.status(500).json({
-        error: true,
-        message: "Houve um erro interno."
+    try {
+      const transaction = await Transaction.findOne({
+        where: {
+          id_transaction: id_transaction,
+          id_user: id_user
+        }
       })
-    })
+
+      if (transaction == null) {
+        const error = new Error(`Não foram encontrada transações com o id ${id_transaction}`)
+        error.statusCode = 404
+        throw error
+      }
+      
+      return res.status(200).json({
+        error: false,
+        message: "Transação localizada com sucesso.",
+        transaction: transaction.dataValues
+      })
+
+    } catch (error){
+      next(error)
+    }
   },
-  getTransactionsByName: async (req, res) => {
+  getTransactionsByName: async (req, res, next) => {
     // #swagger.tags = ['Transaction']
     // #swagger.description = 'Endpoint para obter uma transação por nome.'
     let id_user = req.userId
     let name_transaction = req.params.name_transaction
-    console.log(id_user)
-    console.log(name_transaction)
-    Transaction.findAll({
-      where: {
-        id_user: id_user,
-        name_transaction: {
-          [Op.like]: `%${name_transaction}%`
+
+    try {
+      const transactions = await Transaction.findAll({
+        where: {
+          id_user: id_user,
+          name_transaction: {
+            [Op.like]: `%${name_transaction}%`
+          }
         }
-      }
-    }).then(transactions => {
-      console.log(transactions)
-      if (transactions.length == 0) {
-        res.status(404).json({
-          error: true,
-          message: "Não foram encontradas transações.",
-          transaction_name: name_transaction
-        })
-      } else {
-        console.log(transactions)
-        res.status(200).json({
-          error: true,
-          message: "Transacões encontradas com sucesso.",
-          transactions: transactions
-        })
-      }
-    }).catch(err => {
-      console.log("Erro: " + err)
-      res.status(500).json({
-        error: true,
-        message: "Houve um erro ao buscar as transações.",
-        transaction_name: name_transaction
       })
-    })
+
+      if(transactions.length === 0){
+        let error = new Error(`Não foram encontradas transações com o nome ${name_transaction}.`)
+        error.statusCode = 404
+        throw error
+      }
+
+      let amount = await sumAmountTransaction(transactions)
+      return res.status(200).json({
+        error: false,
+        message: `Foram encontradas ${transactions.length} com o nome ${name_transaction}`,
+        totalTransactions: transactions.length,
+        amount,
+        transactions
+      })
+
+    } catch (error){
+      next(error)
+    }
   },
-  getTransactionsByCategoryName: async (req, res) => {
+  getTransactionsByCategoryName: async (req, res, next) => {
     // #swagger.tags = ['Transaction']
     // #swagger.description = 'Endpoint para obter transações associadas a uma categoria.'
     let id_user = req.userId
     let name_category = req.params.name_category
 
-    Transaction.findAll({
-      where: {
-        id_user: id_user
-      },
-      include: [{
-        model: Category,
+    try {
+      let transactions = await Transaction.findAll({
         where: {
-          name_category: {
-            [Op.like]: `%${name_category}%`
+          id_user: id_user
+        },
+        include: [{
+          model: Category,
+          where: {
+            name_category: {
+              [Op.like]: `%${name_category}%`
+            }
           }
-        }
-      }]
-    }).then(transactions => {
-      if (transactions.length == 0) {
-        res.status(404).json({
-          error: true,
-          message: "Não foram encontradas transações relacionadas a categoria.",
-          category_name: name_category
-        })
-      } else {
-        res.status(200).json({
-          error: false,
-          message: "Transações encontradas com sucesso.",
-          category_name: name_category,
-          quantity_trasanctions: transactions.length,
-          transactions: transactions
-        })
-      }
-    }).catch(err => {
-      console.error(err)
-      res.status(500).json({
-        error: true,
-        message: "Houve um erro no servidor.",
-        error: err
+        }]
       })
-    })
 
+      if(transactions.length == 0){
+        const error = new Error(`Não foram encontradas transações associadas a categoria ${name_category}.`)
+        error.statusCode = 404
+        throw error
+      }
+
+      let amount = await sumAmountTransaction(transactions)
+
+      return res.status(200).json({
+        error: false,
+        message: `Foram encontradas ${transactions.length} transações associadas a categoria ${name_category}.`,
+        category_name: name_category,
+        quantity_trasanctions: transactions.length,
+        amount,
+        transactions
+      })
+
+    } catch (error){
+      next(error)
+    }
   },
   getTransactionByDate: async (req, res, next) => {
     // #swagger.tags = ['Transaction']
@@ -233,12 +228,15 @@ const transactionController = {
         throw error
       }
 
+      let amount = await sumAmountTransaction(transactionByDate)
+
       return res.status(200).json({
         error: false,
         message: `Foram encontradas ${transactionByDate.length} transações associadas a data ${dateToFind}`,
+        totalTransactions: transactionByDate.length,
+        amount,
         transaction: transactionByDate
       })
-
 
     } catch (error) {
       next(error)
@@ -267,11 +265,15 @@ const transactionController = {
         throw error
       }
       
+      let amount = await sumAmountTransaction(transactionInRangeDate)
+
       return res.status(200).json({
         error: false,
         message: `Foram encontradas ${transactionInRangeDate.length} transações entre as datas ${initial_date} e ${final_date}.`,
         initial_date,
         final_date,
+        totalTransactions: transactionInRangeDate.length,
+        amount,
         transactionInRangeDate
       })
 
@@ -310,7 +312,7 @@ const transactionController = {
           }
         })
 
-        res.status(200).json({
+        return res.status(200).json({
           error: false,
           message: "Transação deletada com sucesso.",
           id_transaction: id_transaction,
