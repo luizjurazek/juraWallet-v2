@@ -1,9 +1,15 @@
-const { Op } = require('sequelize');
+const {
+  Op
+} = require('sequelize');
 const Transaction = require('../models/transactionModel')
 const Category = require('../models/categoryModel')
 
-const { verifyTransactionData } = require('../utils/verifyData')
-const { sumAmountTransaction } = require('../utils/sumAmountTransaction')
+const {
+  verifyTransactionData
+} = require('../utils/verifyData')
+const {
+  sumAmountTransaction
+} = require('../utils/sumAmountTransaction')
 
 const transactionController = {
   createTransaction: async (req, res, next) => {
@@ -21,7 +27,7 @@ const transactionController = {
 
     try {
       const checkData = await verifyTransactionData(data_transaction)
-      if(checkData){
+      if (checkData) {
         const error = new Error(checkData.message)
         error.statusCode = checkData.statusCode
         throw error
@@ -34,23 +40,23 @@ const transactionController = {
         id_user: data_transaction.id_user,
         id_category: data_transaction.id_category,
         id_typeOfTransaction: data_transaction.id_typeOftransaction
-      })  
+      })
 
-      if(createdTransaction.length === 0){
+      if (createdTransaction.length === 0) {
         const error = new Error("Houve um erro ao cadastrar a transação.")
         error.statusCode = 400
         throw error
       }
-      
+
       return res.status(201).json({
         error: false,
         message: "Transação cadastrada com sucesso.",
         createdTransaction
       })
 
-    } catch (error){
+    } catch (error) {
       console.log(error)
-      if(error.name === 'SequelizeForeignKeyConstraintError'){
+      if (error.name === 'SequelizeForeignKeyConstraintError') {
         return res.status(400).json({
           error: true,
           message: "Não foi possível adicionar a transação, uma foreign key falhou.",
@@ -76,7 +82,7 @@ const transactionController = {
         }
       })
 
-      if(transactions.length == 0){
+      if (transactions.length == 0) {
         const error = new Error("Não foram encontradas transações")
         error.statusCode = 404
 
@@ -93,7 +99,7 @@ const transactionController = {
         transactions
       })
 
-    } catch (error){
+    } catch (error) {
       next(error)
     }
 
@@ -118,14 +124,14 @@ const transactionController = {
         error.statusCode = 404
         throw error
       }
-      
+
       return res.status(200).json({
         error: false,
         message: "Transação localizada com sucesso.",
         transaction: transaction.dataValues
       })
 
-    } catch (error){
+    } catch (error) {
       next(error)
     }
   },
@@ -145,7 +151,7 @@ const transactionController = {
         }
       })
 
-      if(transactions.length === 0){
+      if (transactions.length === 0) {
         let error = new Error(`Não foram encontradas transações com o nome ${name_transaction}.`)
         error.statusCode = 404
         throw error
@@ -160,7 +166,7 @@ const transactionController = {
         transactions
       })
 
-    } catch (error){
+    } catch (error) {
       next(error)
     }
   },
@@ -185,7 +191,7 @@ const transactionController = {
         }]
       })
 
-      if(transactions.length == 0){
+      if (transactions.length == 0) {
         const error = new Error(`Não foram encontradas transações associadas a categoria ${name_category}.`)
         error.statusCode = 404
         throw error
@@ -202,7 +208,7 @@ const transactionController = {
         transactions
       })
 
-    } catch (error){
+    } catch (error) {
       next(error)
     }
   },
@@ -259,12 +265,12 @@ const transactionController = {
         }
       })
 
-      if(transactionInRangeDate.length === 0){
+      if (transactionInRangeDate.length === 0) {
         const error = new Error(`Não foram encontradas transações entre as datas ${initial_date} e ${final_date}.`)
         error.statusCode = 404
         throw error
       }
-      
+
       let amount = await sumAmountTransaction(transactionInRangeDate)
 
       return res.status(200).json({
@@ -277,7 +283,7 @@ const transactionController = {
         transactionInRangeDate
       })
 
-    } catch (error){
+    } catch (error) {
       next(error)
     }
 
@@ -325,6 +331,81 @@ const transactionController = {
         message: "Houve um erro no servidor.",
         error: err
       })
+    }
+  },
+  editTransaction: async (req, res) => {
+    // #swagger.tags = ['Transaction']
+    // #swagger.description = 'Endpoint para editar uma transação.'
+    const {
+      id,
+      name,
+      price,
+      date,
+      id_category,
+      id_typeOfTransaction
+    } = req.body
+    id_user = req.userId
+
+    try {
+      const transaction = await Transaction.findOne({
+        where: {
+          id_user,
+          id_transaction: id
+        }
+      })
+
+      if (transaction === null) {
+        const error = new Error(`Transação não encontrada.`)
+        error.statusCode = 404
+        throw error
+      }
+
+      const dateFormated = new Date(date)
+
+      const transactionUpdate = await Transaction.update({
+        name_transaction: name,
+        price_transaction: price,
+        date_transaction: dateFormated,
+        id_category: id_category,
+        id_typeOfTransaction: id_typeOfTransaction
+      }, {
+        where: {
+          id_user: id_user,
+          id_transaction: id
+        }
+      })
+
+      console.log(transactionUpdate)
+
+      if (transactionUpdate[0] === 0) {
+        return res.status(200).json({
+          error: false,
+          message: "Todos os campos permanecem iguais.",
+        })
+      }
+
+
+      return res.status(200).json({
+        error: false,
+        message: "Transação editada com sucesso.",
+        id_transaction: id,
+        transaction: {
+          name: transaction.name_transaction,
+          price: transaction.price_transaction,
+          date: transaction.date_transaction,
+          id_category: transaction.id_category,
+          id_typeOfTransaction: transaction.id_typeOfTransaction
+        },
+        transactionEdited: {
+          name,
+          price,
+          date,
+          id_category,
+          id_typeOfTransaction
+        }
+      })
+    } catch (error) {
+      throw error
     }
   }
 }

@@ -34,10 +34,6 @@ app.use(errorHandler)
 process.on('uncaughtException', (err, origin) => {
     console.error(`Caught exception: ${err}\n` +
         `Exception origin: ${origin}\n`, )
-    // Send error response to the user
-    res.status(500).json({
-        error: 'Something went wrong.'
-    });
 
     // Exit the process as it's in an unstable state
     process.exit(1);
