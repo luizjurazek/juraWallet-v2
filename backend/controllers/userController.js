@@ -48,7 +48,7 @@ const userController = {
       if (newUser) {
         const response = {
           error: false,
-          mensagem: "Usuário cadastrado com sucesso!",
+          message: "Usuário cadastrado com sucesso!",
           user: {
             id: newUser.dataValues.id_user,
             name: name,

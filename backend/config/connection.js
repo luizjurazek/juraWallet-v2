@@ -2,9 +2,11 @@ const mysql = require('mysql2')
 const { Sequelize } = require('sequelize')
 require('dotenv').config()
 
+const isTestEnvironment = process.env.NODE_ENV === 'test';
+
 const host = process.env.DB_HOST;
 const user = process.env.DB_USER;
-const database = process.env.DB_DATABASE;
+const database = isTestEnvironment ? process.env.DB_DATABASE_TESTE : process.env.DB_DATABASE;
 
 const connection = mysql.createConnection({
     host: host,
