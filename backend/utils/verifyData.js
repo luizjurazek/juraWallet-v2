@@ -60,7 +60,7 @@ async function verifyUserData(user) {
         const error = {
             error: true,
             statusCode: 400,
-            message: "O telefone deve seguir o padrão (xx)xxx-xxxx"
+            message: "O telefone deve seguir o padrão (xx)xxxxx-xxxx"
         }
         return error
     }
