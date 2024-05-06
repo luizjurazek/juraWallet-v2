@@ -12,7 +12,7 @@ const userTest = {
 }
 
 describe('Teste all endpoints for model User', () => {
-    // Test endpoint to create a user
+    //Do tests for endpoint to create a user
     it('should return status code 400 when any field is empty', async () => {
         const res = await request(app)
             .post('/users/create-new-user')
@@ -110,8 +110,47 @@ describe('Teste all endpoints for model User', () => {
             })
         expect(res.status).toBe(400)
     })
-})
 
-User.destroy({where: {
-    email_user: 'emailteste@gmail.com'
-}})
+    //Do tests for endpoint to login
+    it('should return status code 404 if user is not found', async () => {
+        const res = await request(app)
+            .post('/users/login')
+            .send({
+                name: userTest.name,
+                lastname: userTest.lastname,
+                phonenumber: userTest.phonenumber,
+                email: 'email@errado.com',
+                password: userTest.password,
+                birthday: userTest.birthday
+            })
+        expect(res.status).toBe(404)
+    })
+
+    it('should return status code 403 if password is wrong', async () => {
+        const res = await request(app)
+            .post('/users/login')
+            .send({
+                name: userTest.name,
+                lastname: userTest.lastname,
+                phonenumber: userTest.phonenumber,
+                email: userTest.email,
+                password: 'password-wrong',
+                birthday: userTest.birthday
+            })
+        expect(res.status).toBe(403)
+    })
+
+    it('should return status code 200 if all data is rigth and user can be allowed', async () => {
+        const res = await request(app)
+            .post('/users/login')
+            .send({
+                name: userTest.name,
+                lastname: userTest.lastname,
+                phonenumber: userTest.phonenumber,
+                email: userTest.email,
+                password: userTest.password,
+                birthday: userTest.birthday
+            })
+        expect(res.status).toBe(200)
+    })
+})

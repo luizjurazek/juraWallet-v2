@@ -107,7 +107,7 @@ const userController = {
       // caso seja diferente retorno um status 400
       if (!(await bcrypt.compare(password, user.dataValues.password_user))) {
         const error = new Error("Email ou senha incorretos.")
-        error.statusCode = 400
+        error.statusCode = 403
 
         throw error
       }
