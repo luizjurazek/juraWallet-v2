@@ -1,6 +1,8 @@
+const jwt = require('jsonwebtoken')
 const request = require('supertest')
 const app = require('../../server')
 const User = require('../../models/userModel')
+const SECRET_JWT = process.env.SECRET_JWT
 
 const userTest = {
     name: 'user-teste',
@@ -151,6 +153,31 @@ describe('Teste all endpoints for model User', () => {
                 password: userTest.password,
                 birthday: userTest.birthday
             })
+        expect(res.status).toBe(200)
+    })
+
+    it('should return status code 200 if user deleted succesfully', async () => {
+        const loginResponse = await request(app)
+            .post('/users/login')
+            .send({
+                name: userTest.name,
+                lastname: userTest.lastname,
+                phonenumber: userTest.phonenumber,
+                email: userTest.email,
+                password: userTest.password,
+                birthday: userTest.birthday
+            })
+        
+
+        // Extrair o token e o userId de autenticação do loginResponse
+        const token = loginResponse.body.token;
+        const userId = loginResponse.body.user_id;
+
+        const res = await request(app)
+            .delete('/users/delete-account')
+            .set('Authorization', token)
+            .set('userId', userId);
+
         expect(res.status).toBe(200)
     })
 })
